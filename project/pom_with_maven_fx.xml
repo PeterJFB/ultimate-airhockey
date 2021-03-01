@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>tdt4100-v2021</groupId>
-    <artifactId>project</artifactId>
+    <artifactId>prosjekt</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <dependencies>
@@ -36,6 +36,16 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.fxml</include>
+                    <include>**/*.css</include>
+                    <include>**/*.TTF</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -49,7 +59,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M5</version>
                 <configuration>
-                    <compilerArgs>--enable-preview</compilerArgs>
+                   <!-- <compilerArgs>&#45;&#45;enable-preview</compilerArgs>-->
                 </configuration>
             </plugin>
 	    <plugin>
@@ -60,7 +70,7 @@
                     <options>
                         <option>--enable-preview</option>
                     </options>
-		    <mainClass>project/project.fxui.App</mainClass><!--Endre denne til å peke på din App-klasse om du vil bruke javafx-maven-plugin -->
+		    <mainClass>project/airhockey.GameApp</mainClass><!--Endre denne til å peke på din App-klasse om du vil bruke javafx-maven-plugin -->
                 </configuration>
 	</plugin>
         </plugins>
