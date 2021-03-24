@@ -1,20 +1,16 @@
 package airhockey;
 
-import javafx.application.Platform;
-
-import java.util.Timer;
-import java.util.TimerTask;
-
 public class CountDown {
-    private int startTime;
-    private float time=startTime;
-    private float timeIntervalInSeconds;
+    private final int startTime;
+    private float time;
+    private final float timeIntervalInSeconds;
 
     public CountDown(int startTime, float timeIntervalInSeconds) {
         if (startTime <= 0) {
             throw new IllegalArgumentException("startTime must be a positive integer: " + startTime);
         }
         this.startTime = startTime;
+        this.time = startTime;
 
         if (timeIntervalInSeconds <= 0) {
             throw new IllegalArgumentException("timeIntervalInSeconds must be a non-negative number: " + timeIntervalInSeconds);
@@ -22,20 +18,31 @@ public class CountDown {
         this.timeIntervalInSeconds = timeIntervalInSeconds;
     }
 
-    public boolean isFinished() {
-        return time <= 0;
+    // Getters and Setters
+
+    public int getTimeInSeconds() {
+        return (int) Math.ceil(getTime());
     }
 
-    public void start() {
-        time = startTime;
+    public float getTime() {
+        return time;
+    }
+
+    public void setTime(float time) {
+        if (time <= 0)
+            throw new IllegalArgumentException("Time left must be positive: " + time);
+        this.time = time;
+    }
+
+    // Logic
+
+    public boolean isFinished() {
+        return getTime() <= 0;
     }
 
     public void tick() {
-        time = time > 0 ? time - timeIntervalInSeconds: time;
+        if (!isFinished())
+            time =  getTime() - timeIntervalInSeconds;
     }
-
-    public int getTimeInSeconds() {
-        return (int) Math.ceil(time);
-}
 
 }

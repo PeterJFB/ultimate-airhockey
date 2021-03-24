@@ -5,49 +5,207 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="root" onKeyPressed="#handleKeyPress" onKeyReleased="#handleKeyRelease" prefHeight="400.0" prefWidth="695.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="airhockey.GameController">
+<AnchorPane fx:id="root" onKeyPressed="#handleKeyPress" onKeyReleased="#handleKeyRelease" style="-fx-background-color: salmon;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="airhockey.GameController">
    <children>
-      <GridPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="695.0">
+      <GridPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="-Infinity" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints percentHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="NEVER" />
+          <RowConstraints percentHeight="14.0" prefHeight="30.0" valignment="TOP" vgrow="NEVER" />
           <RowConstraints percentHeight="80.0" valignment="CENTER" vgrow="ALWAYS" />
-          <RowConstraints maxHeight="266.0" minHeight="0.0" percentHeight="10.0" prefHeight="45.0" valignment="BOTTOM" vgrow="NEVER" />
+          <RowConstraints percentHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
         </rowConstraints>
          <children>
-            <Text fx:id="scoreText" strokeType="OUTSIDE" strokeWidth="0.0" text="0 - 0" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+            <HBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="100.0" style="-fx-background-color: #414141; -fx-border-color: black; -fx-border-width: 10; -fx-border-radius: 10; -fx-background-radius: 1; -fx-border-insets: -10; -fx-min-width: 20;" GridPane.valignment="CENTER">
+               <GridPane.margin>
+                  <Insets bottom="20.0" top="20.0" />
+               </GridPane.margin>
+            </HBox>
+            <Text fx:id="scoreText" fill="#ff2c2c" strokeType="OUTSIDE" strokeWidth="0.0" text="0 - 0" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+               <font>
+                  <Font name="System Bold" size="27.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </GridPane.margin>
+            </Text>
+            <Text fx:id="playerLeftNameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="RIGHT" visible="false" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
                <font>
                   <Font size="20.0" />
                </font>
                <GridPane.margin>
-                  <Insets bottom="5.0" />
+                  <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
                </GridPane.margin></Text>
-            <Text fx:id="playerLeftNameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="RIGHT" GridPane.halignment="LEFT">
+            <Text fx:id="playerRightNameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
                <font>
                   <Font size="20.0" />
-               </font></Text>
-            <Text fx:id="playerRightNameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.halignment="RIGHT">
-               <font>
-                  <Font size="20.0" />
-               </font></Text>
-            <Pane fx:id="rinkPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="200.0" style="-fx-background-color: lightblue;" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-            <Button fx:id="startAndResetButton" mnemonicParsing="false" text="Button" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-            <Text fx:id="countDownText" strokeType="OUTSIDE" strokeWidth="0.0" text="60" GridPane.halignment="CENTER" GridPane.valignment="TOP">
+               </font>
                <GridPane.margin>
-                  <Insets top="5.0" />
-               </GridPane.margin>
+                  <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+               </GridPane.margin></Text>
+            <Pane fx:id="rinkPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #B3E5FC; -fx-border-insets: -20; -fx-border-width: 20; -fx-border-color: #616161; -fx-border-radius: 20;" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+               <GridPane.margin>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </GridPane.margin></Pane>
+            <Text fx:id="winnerText" strokeType="OUTSIDE" strokeWidth="0.0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <font>
-                  <Font size="20.0" />
+                  <Font name="System Bold" size="50.0" />
                </font>
             </Text>
+            <HBox alignment="CENTER" GridPane.rowIndex="2">
+               <children>
+                  <Button fx:id="ResetButton" mnemonicParsing="false" onAction="#restartGame" stylesheets="@rink.css" text="Reset">
+                     <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="startAndPauseButton" alignment="CENTER" mnemonicParsing="false" onAction="#playGame" stylesheets="@rink.css" text="Start">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Button>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </HBox>
+            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveGame" styleClass="fileButton" stylesheets="@rink.css" text="Save" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="TOP">
+               <font>
+                  <Font size="17.0" />
+               </font>
+               <padding>
+                  <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
+               </padding>
+               <GridPane.margin>
+                  <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
+               </GridPane.margin>
+            </Button>
+            <Button fx:id="loadButton" mnemonicParsing="false" onAction="#loadGame" styleClass="fileButton" stylesheets="@rink.css" text="Load" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+               <font>
+                  <Font size="17.0" />
+               </font>
+               <padding>
+                  <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
+               </padding>
+               <GridPane.margin>
+                  <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
+               </GridPane.margin>
+            </Button>
+            <Text fx:id="countDownText" fill="#ff2c2c" strokeType="OUTSIDE" strokeWidth="0.0" text="60" GridPane.halignment="CENTER" GridPane.valignment="TOP">
+               <GridPane.margin>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </GridPane.margin>
+               <font>
+                  <Font name="System Bold" size="27.0" />
+               </font>
+            </Text>
+            <GridPane minHeight="-Infinity" minWidth="-Infinity">
+              <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="40.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="40.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="40.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="40.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="40.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="40.0" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Pane prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.rowSpan="2" GridPane.valignment="CENTER">
+                     <children>
+                        <Text fill="WHITE" layoutX="11.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="keyText" text="D">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Text>
+                     </children>
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Pane>
+                  <Pane prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="2">
+                     <children>
+                        <Text fill="WHITE" layoutX="9.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="keyText" text="W">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Text>
+                     </children>
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Pane>
+                  <Pane prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.rowSpan="2">
+                     <children>
+                        <Text fill="WHITE" layoutX="13.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="keyText" text="S">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Text>
+                     </children>
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Pane>
+                  <Pane prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="5" GridPane.rowIndex="1" GridPane.rowSpan="2">
+                     <children>
+                        <Text fill="WHITE" layoutX="15.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="keyText" text="I">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Text>
+                     </children>
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Pane>
+                  <Pane prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="4" GridPane.rowIndex="2" GridPane.rowSpan="2">
+                     <children>
+                        <Text fill="WHITE" layoutX="14.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="keyText" text="J">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Text>
+                     </children>
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Pane>
+                  <Pane prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="5" GridPane.rowIndex="3" GridPane.rowSpan="2">
+                     <children>
+                        <Text fill="WHITE" layoutX="12.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="keyText" text="K">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Text>
+                     </children>
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Pane>
+               </children>
+            </GridPane>
          </children>
+         <padding>
+            <Insets left="50.0" right="50.0" />
+         </padding>
       </GridPane>
    </children>
 </AnchorPane>

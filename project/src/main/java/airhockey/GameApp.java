@@ -3,7 +3,6 @@ package airhockey;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class GameApp extends Application {
@@ -20,7 +19,7 @@ public class GameApp extends Application {
 
 
     public static void main(String[] args) {
-        GameApp.launch(args);
+        launch(GameApp.class, args);
     }
 }
 

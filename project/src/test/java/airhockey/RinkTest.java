@@ -1,10 +1,12 @@
 package airhockey;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class RinkTest {
     @Test
+    @DisplayName("Invalid dimension initialization gives error")
     public void checkDimensions() {
 
         Assertions.assertThrows(IllegalArgumentException.class, () ->{
@@ -18,9 +20,10 @@ public class RinkTest {
         });
 
         Assertions.assertDoesNotThrow(() ->{
-            Rink rink = new Rink(100, 50);
-        });Assertions.assertDoesNotThrow(() ->{
-            Rink rink = new Rink(60, 20);
+            Rink rink = new Rink(100, 100);
         });
+        // TODO: Test deklarasjon av objekter
+        // TODO: Test isCollidingWith funker som den skal.
+
     }
 }

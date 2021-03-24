@@ -1,10 +1,14 @@
 package airhockey;
 
 public class PlayerControls {
-    protected boolean pressingUp = false;
-    protected boolean pressingDown = false;
-    protected boolean pressingLeft = false;
-    protected boolean pressingRight = false;
+    /*
+    * Convert discrete events to continuous values which Player-class can rely on.
+    * */
+
+    boolean pressingUp = false;
+    boolean pressingDown = false;
+    boolean pressingLeft = false;
+    boolean pressingRight = false;
 
     public PlayerControls() {
 

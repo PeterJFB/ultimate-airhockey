@@ -2,7 +2,9 @@ package airhockey;
 
 import javafx.scene.shape.Circle;
 
-public class Player extends PlayerControls {
+import java.lang.reflect.Method;
+
+public class Player extends PlayerControls implements circleObject {
 
     // Position
     private float x;
@@ -11,58 +13,141 @@ public class Player extends PlayerControls {
     private final float originY;
     private float reachX;
     private float reachY;
-    private float radius = 12;
+    private float radius = 24;
 
     // Movement
     private float vx = 0;
     private float vy = 0;
-    private float v = 200;
-    private float dt;
+    private final float VELOCITY = 400;
+    private final float dt;
 
     // Physics
-    final public float mass = 20;
+    public final float mass = 20;
 
     // Other
-    private GoalSide side;
+    private final GoalSide side;
     private String name;
-    private Rink rink;
+    private final Rink rink;
 
-    public Player(float x, Rink rink, float reachX, GoalSide side, String name) {
+    public Player(float x, float y,
+                  float vx, float vy,
+                  float originX,
+                  float reachX, float reachY,
+                  float radius,
+                  GoalSide side, String name, Rink rink) {
         super();
         this.rink = rink;
-        originY = (float) rink.getHeight() / 2;
-        originX = x;
-        this.x = originX;
-        this.y = originY;
-        this.reachX = reachX;
-        this.reachY = rink.getHeight()/2f - radius;
+        setRadius(radius);
+
+        setX(x);
+        setY(y);
+        setVx(vx);
+        setVy(vy);
+
+        validateOriginX(originX);
+        this.originX = originX;
+        this.originY = rink.getHeight() / 2f;
+
+        setReachX(reachX);
+        setReachY(reachY);
 
         dt = (float) this.rink.getTickInterval() / 1000;
-
         this.side = side;
         this.name = name;
     }
 
-    // Getters and Setters
+    public Player(float x, Rink rink, float reachX, float radius, GoalSide side, String name) {
+        this(x, rink.getHeight() / 2f,
+                0, 0, x,
+                reachX, rink.getHeight() / 2f - radius,
+                radius, side, name, rink);
+    }
+
+// Getters and Setters
+
+    public float getRadius() {
+        return radius;
+    }
+
+    private void setRadius(float radius) {
+        if (radius < 0)
+            throw new IllegalArgumentException("Radius cannot be negative: " + radius);
+        this.radius = radius;
+    }
 
     public float getX() {
         return x;
+    }
+
+    public void setX(float x) {
+        System.out.println(radius);
+        if (0 + radius > x || x > rink.getWidth() - radius)
+            throw new IllegalArgumentException("X must be within bounds of rink (0 - " + rink.getWidth() + "): " + x);
+        this.x = x;
     }
 
     public float getY() {
         return y;
     }
 
+    public void setY(float y) {
+        if (0 + radius > y || y > rink.getHeight() - radius)
+            throw new IllegalArgumentException("Y must be within bounds of rink (0 - " + rink.getHeight() + "): " + y);
+        this.y = y;
+    }
+
     public float getVx() {
         return vx;
+    }
+
+    public void setVx(float vx) {
+        if (Math.abs(vx) > rink.getWidth())
+            throw new IllegalArgumentException("Vx is larger than size of rink: " + vx);
+        this.vx = vx;
     }
 
     public float getVy() {
         return vy;
     }
 
-    public float getRadius() {
-        return radius;
+    public void setVy(float vy) {
+        if (Math.abs(vx) > rink.getHeight())
+            throw new IllegalArgumentException("Vy is larger than size of rink: " + vy);
+        this.vy = vy;
+    }
+
+    public float getOriginX() {
+        return originX;
+    }
+
+    public void validateOriginX(float originX) {
+        if (0 + radius > originX || originX > rink.getWidth() - radius) {
+            throw new IllegalArgumentException("OriginX must be within bounds of rink (0 - " + rink.getWidth() + "): " + originX);
+        }
+    }
+
+    private float getOriginY() {
+        return originY;
+    }
+
+    public float getReachX() {
+        return reachX;
+    }
+
+    public void setReachX(float reachX) {
+        if (reachX < 0)
+            throw new IllegalArgumentException("reachX has to be positive: " + reachX);
+        this.reachX = reachX;
+    }
+
+    public float getReachY() {
+        return reachY;
+    }
+
+    public void setReachY(float reachY) {
+        if (reachY < 0)
+            throw new IllegalArgumentException("reachY has to be positive: " + reachY);
+        this.reachY = reachY;
     }
 
     public GoalSide getSide() {
@@ -77,12 +162,26 @@ public class Player extends PlayerControls {
         this.name = name;
     }
 
+    public float getMass() {
+        return mass;
+    }
+
+    private void validateMass(float mass) {
+        if (mass <= 0) {
+            throw new IllegalArgumentException("Mass has to be positive: " + mass);
+        }
+    }
+
+    public String getId() {
+        return getName();
+    }
+
     // Movement
 
     public void updateMovement() {
-        
+
         // Update velocity based on input
-        
+
         if (pressingUp) {
             moveUp();
         }
@@ -95,69 +194,74 @@ public class Player extends PlayerControls {
         if (pressingRight && side == GoalSide.LEFT) {
             moveRight();
         }
-        
+
         // Update position based on which direction is pressed 
 
         // Vertical
         if (pressingUp || pressingDown) {
-            y += vy * dt;
+            y += getVy() * dt;
         } else {
             // If no vertical input, move player towards origin
-            float centerDirX = originX - x;
-            float centerDirY = originY - y;
+            float centerDirX = getOriginX() - getX();
+            float centerDirY = getOriginY() - getY();
 
-            if (Math.abs(centerDirX) > v*dt || Math.abs(centerDirY) > v*dt) {
-                float scale = (float) (v / Math.sqrt(centerDirX * centerDirX + centerDirY * centerDirY));
+            if (Math.abs(centerDirX) > VELOCITY * dt || Math.abs(centerDirY) > VELOCITY * dt) {
+                float scale = (float) (VELOCITY / Math.sqrt(centerDirX * centerDirX + centerDirY * centerDirY));
                 vy = centerDirY * scale;
-                y += vy * dt;
+                y += getVy() * dt;
             } else {
-                y = originY;
+                y = getOriginY();
                 vy = 0;
             }
         }
         // Adjust position if player is exceeding their vertical reach
-        if (Math.abs(y-originY) > reachY) {
-            y = y - originY < 0 ? originY - reachY : originY + reachY;
+        if (Math.abs(y - getOriginY()) > getReachY()) {
+            setY(y - getOriginY() < 0 ? getOriginY() - getReachY() : getOriginY() + getReachY());
         }
 
         // Horizontal
         if (pressingLeft && side == GoalSide.RIGHT || pressingRight && side == GoalSide.LEFT) {
-            x += vx * dt;
+            x += getVx() * dt;
         } else {
             // If no horizontal input, move player towards origin
-            float centerDirX = originX - x;
-            float centerDirY = originY - y;
+            float centerDirX = getOriginX() - getX();
+            float centerDirY = getOriginY() - getY();
 
-            if (Math.abs(centerDirX) > v*dt || Math.abs(centerDirY) > v*dt) {
-                float scale = (float) (v / Math.sqrt(centerDirX * centerDirX + centerDirY * centerDirY));
+            if (Math.abs(centerDirX) > VELOCITY * dt || Math.abs(centerDirY) > VELOCITY * dt) {
+                float scale = (float) (VELOCITY / Math.sqrt(centerDirX * centerDirX + centerDirY * centerDirY));
                 vx = centerDirX * scale;
-                x += vx * dt;
+                x += getVx() * dt;
             } else {
-                x = originX;
+                x = getOriginX();
                 vx = 0;
             }
         }
         // Adjust position if player is exceeding their Horizontal reach
-        if (Math.abs(x-originX) > reachX) {
-            x = x - originX < 0 ? originX - reachX : originX + reachX;
+        if (Math.abs(x - getOriginX()) > getReachX()) {
+            setX(x - getOriginX() < 0 ? getOriginX() - getReachX() : getOriginX() + getReachX());
         }
     }
 
     private void moveUp() {
-        vy = -v;
+        vy = -VELOCITY;
     }
+
     private void moveDown() {
-        vy = v;
+        vy = VELOCITY;
     }
 
     // Horizontal velocity is based on how far the player is from origin
     private void moveLeft() {
-        vx = -v * (float) Math.pow((4*reachX - Math.abs(x - originX))/(4*reachX), 2);
-    }
-    private void moveRight() {
-        vx = v * (float) Math.pow( (4*reachX - Math.abs(x - originX))/(4*reachX), 2);
+        vx = -VELOCITY * getVxDistanceMultiplier();
     }
 
+    private void moveRight() {
+        vx = VELOCITY * getVxDistanceMultiplier();
+    }
+
+    private float getVxDistanceMultiplier() {
+        return (float) Math.pow((4 * getReachX() - Math.abs(getX() - getOriginX())) / (4 * getReachX()), 2);
+    }
 
     // Drawing
 
@@ -166,9 +270,8 @@ public class Player extends PlayerControls {
         playerCircle.setRadius(radius);
         playerCircle.setCenterX(x);
         playerCircle.setCenterY(y);
-        playerCircle.setStyle("-fx-fill: red; -fx-border-color: black; -fx-border-width: 20px;");
+        playerCircle.setStyle("-fx-fill: #E53935; -fx-border-color: black; -fx-border-width: 20px;");
 
         return playerCircle;
     }
-
 }

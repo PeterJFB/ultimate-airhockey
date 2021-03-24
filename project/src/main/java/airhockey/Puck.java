@@ -1,18 +1,8 @@
 package airhockey;
 
-
-/*
-* TODO:
-* Check collision with other pucks
-*
-*
-*
-* */
-
-
 import javafx.scene.shape.Circle;
 
-public class Puck {
+public class Puck implements circleObject {
 
     // Position
     private float x;
@@ -20,29 +10,45 @@ public class Puck {
     private float radius;
 
     // Movement
-    private float vx;
-    private float vy;
-    private float dt;
+    private float vx; // px per s
+    private float vy; // px per s
+    private final float dt; // s
 
     // Physics
-    final private float mass = 10;
+    private final float mass = 10;
+    private final float SPAWN_VELOCITY = 10f; // px per s
 
     // Other
-    private Rink rink;
-    private GoalSide lastCollidedWith;
+    private final Rink rink;
+    private String lastCollidedWith = "";
+    private String id;
 
-    public Puck(float x, float y, float vx, float vy, Rink rink, float radius) {
+    public Puck(float x, float y, float vx, float vy, Rink rink, float radius, String id) {
         this.rink = rink;
+
+        setRadius(radius);
+
         setX(x);
         setY(y);
         setVx(vx);
         setVy(vy);
-        setRadius(radius);
-        dt = (float) rink.getTickInterval()/1000;
+
+        setId( id.isEmpty() ? String.valueOf(this.hashCode()) : id);
+        dt = rink.getTickInterval() / 1000f;
     }
+
+    public Puck(float x, float y, float vx, float vy, Rink rink, float radius) {
+        this(x, y, vx, vy, rink, radius, "");
+    }
+
 
     public Puck(float x, float y, Rink rink, float radius) {
         this(x, y, 0, 0, rink, radius);
+    }
+
+    public Puck(Rink rink, float radius) {
+        this(rink.getWidth()/2f, rink.getHeight()/2f, 0, 0, rink, radius);
+        resetTo(rink.playerLeft);
     }
 
     // Getters and Setters
@@ -71,7 +77,10 @@ public class Puck {
         return vx;
     }
 
-    public void setVx(float vx) {
+    void setVx(float vx) {
+        if (Math.abs(vx) > rink.getWidth()/dt) {
+            throw new IllegalArgumentException("Velocity is unreasonably large: " + vx);
+        }
         this.vx = vx;
     }
 
@@ -79,7 +88,10 @@ public class Puck {
         return vy;
     }
 
-    public void setVy(float vy) {
+    void setVy(float vy) {
+        if (Math.abs(vy) > rink.getHeight()/dt) {
+            throw new IllegalArgumentException("Velocity is unreasonably large: " + vy);
+        }
         this.vy = vy;
     }
 
@@ -87,109 +99,197 @@ public class Puck {
         return radius;
     }
 
-    public void setRadius(float radius) {
+    void setRadius(float radius) {
         if (radius <= 0)
             throw new IllegalArgumentException("Radius must be a positive number: " + radius);
         this.radius = radius;
     }
 
-    public void setLastCollidedWith(GoalSide lastCollidedWith) {
+    public void setLastCollidedWith(String lastCollidedWith) {
         this.lastCollidedWith = lastCollidedWith;
     }
 
-    public GoalSide getLastCollidedWith() {
+    public String getLastCollidedWith() {
         return lastCollidedWith;
+    }
+
+    public float getMass() {
+        return mass;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Id of puck cannot be null.");
+        }
+        this.id = id;
     }
 
     // Logic
 
     public void updateWallCollision() {
-        if (x - radius <= 0) {
-            setVx(Math.abs(vx));
-        } else if (rink.getWidth() <= x + radius) {
-            setVx(-Math.abs(vx));
+        if (getX() - getRadius() <= 0) {
+            setVx(Math.abs(getVx()));
+        } else if (rink.getWidth() <= getX() + getRadius()) {
+            setVx(-Math.abs(getVx()));
         }
-        if (y - radius <= 0) {
-            setVy(Math.abs(vy));
-        } else if (rink.getHeight() <= y + radius) {
-            setVy(-Math.abs(vy));
+        if (getY() - getRadius() <= 0) {
+            setVy(Math.abs(getVy()));
+        } else if (rink.getHeight() <= getY() + getRadius()) {
+            setVy(-Math.abs(getVy()));
         }
     }
 
-    public boolean isCollidingWith(Player player) {
-        float dx = player.getX() - x;
-        float dy = player.getY() - y;
-        float dr = player.getRadius() + radius;
+    private float getDistanceSquared(circleObject object) {
+        float dx = object.getX() - getX();
+        float dy = object.getY() - getY();
 
-        if (dx*dx + dy*dy <= dr*dr) {
-            return getLastCollidedWith() != player.getSide();
+        return dx * dx + dy * dy;
+    }
+
+    public boolean isCollidingWith(Player player) {
+        float distanceSquared = getDistanceSquared(player);
+        float dr = player.getRadius() + getRadius();
+
+        if (distanceSquared <= dr * dr) {
+            return !getLastCollidedWith().equals(player.getId());
         }
 
         // Change last collision if they no longer are close to each other
-        if (getLastCollidedWith() == player.getSide() && dx*dx + dy*dy >= dr*dr*2)
-            setLastCollidedWith(null);
+        if (getLastCollidedWith().equals(player.getId()) && distanceSquared >= dr * dr * 2)
+            setLastCollidedWith("");
+
+        return false;
+    }
+
+    public boolean isCollidingWith(Puck puck) {
+        float distanceSquared = getDistanceSquared(puck);
+        float dr = puck.getRadius() + getRadius();
+
+        if (distanceSquared <= dr * dr) {
+            return !getLastCollidedWith().equals(puck.getId()) || !puck.getLastCollidedWith().equals(getId());
+        }
+
+        // Change last collision if they no longer are close to each other
+        if (distanceSquared >= dr * dr * 2) {
+            if (getLastCollidedWith().equals(puck.getId()))
+                setLastCollidedWith("");
+
+            if (puck.getLastCollidedWith().equals(getId()))
+                puck.setLastCollidedWith("");
+        }
 
         return false;
     }
 
     public void performCollisionWith(Player player) {
 
-        System.out.println(vx + " " + vy);
         // Get direction of collision
-        float dirX = player.getX()-x;
-        float dirY = player.getY()-y;
+        float dirX = player.getX() - getX();
+        float dirY = player.getY() - getY();
 
         // Get velocity in collision direction
-        float collConstant = (dirX * vx + dirY * vy) / (dirX*dirX + dirY*dirY);
+        float collConstant = (dirX * getVx() + dirY * getVy()) / (dirX * dirX + dirY * dirY);
         float collVx = collConstant * dirX;
         float collVy = collConstant * dirY;
 
 
-        float playerCollConstant = (-dirX * player.getVx() + -dirY * player.getVy()) / (dirX*dirX + dirY*dirY);
+        float playerCollConstant = (-dirX * player.getVx() + -dirY * player.getVy()) / (dirX * dirX + dirY * dirY);
         float playerCollVx = playerCollConstant * -dirX;
         float playerCollVy = playerCollConstant * -dirY;
 
         // Get velocity of puck tangent to collision direction. This will not change
-        float tanVx = vx - collVx;
-        float tanVy = vy - collVy;
+        float tanVx = getVx() - collVx;
+        float tanVy = getVy() - collVy;
 
         // New velocity from elastic collision
-        System.out.println(player.mass);
-        float newCollVx = ((mass - player.mass) * collVx + (2 * player.mass * playerCollVx)) / (mass + player.mass);
-        float newCollVy = ((mass - player.mass) * collVy + (2 * player.mass * playerCollVy)) / (mass + player.mass);
+        float newCollVx = ((getMass() - player.getMass()) * collVx + (2 * player.getMass() * playerCollVx)) / (getMass() + player.getMass());
+        float newCollVy = ((getMass() - player.getMass()) * collVy + (2 * player.getMass() * playerCollVy)) / (getMass() + player.getMass());
 
         // Add new velocity to puck
-        setVx(newCollVx+tanVx);
-        setVy(newCollVy+tanVy);
+        setVx(newCollVx + tanVx);
+        setVy(newCollVy + tanVy);
 
         // Logic
-        setLastCollidedWith(player.getSide());
+        setLastCollidedWith(player.getId());
 
-        System.out.println(vx + " " + vy);
+        // I shall now retire
+    }
+
+    public void performCollisionWith(Puck puck) {
+
+        // Get direction of collision
+        float dirX = puck.getX() - getX();
+        float dirY = puck.getY() - getY();
+
+        // Get velocity in collision direction
+        float collConstant = (dirX * getVx() + dirY * getVy()) / (dirX * dirX + dirY * dirY);
+        float collVx = collConstant * dirX;
+        float collVy = collConstant * dirY;
+
+
+        float puckCollConstant = (-dirX * puck.getVx() + -dirY * puck.getVy()) / (dirX * dirX + dirY * dirY);
+        float puckCollVx = puckCollConstant * -dirX;
+        float puckCollVy = puckCollConstant * -dirY;
+
+        // Get velocity of puck tangent to collision direction. This will not change
+        float tanVx = getVx() - collVx;
+        float tanVy = getVy() - collVy;
+
+        float puckTanVx = puck.getVx() - puckCollVx;
+        float puckTanVy = puck.getVy() - puckCollVy;
+
+        // New velocity from elastic collision
+        float newCollVx = ((getMass() - puck.getMass()) * collVx + (2 * puck.getMass() * puckCollVx)) / (getMass() + puck.getMass());
+        float newCollVy = ((getMass() - puck.getMass()) * collVy + (2 * puck.getMass() * puckCollVy)) / (getMass() + puck.getMass());
+
+        float puckNewCollVx = ((puck.getMass() - getMass()) * puckCollVx + (2 * getMass() * collVx)) / (getMass() + puck.getMass());
+        float puckNewCollVy = ((puck.getMass() - getMass()) * puckCollVy + (2 * getMass() * collVy)) / (getMass() + puck.getMass());
+
+
+        // Add new velocity to puck
+        setVx(newCollVx + tanVx);
+        setVy(newCollVy + tanVy);
+
+        puck.setVx(puckNewCollVx + puckTanVx);
+        puck.setVy(puckNewCollVy + puckTanVy);
+
+        // Logic
+        setLastCollidedWith(puck.getId());
+
+        puck.setLastCollidedWith(getId());
+
         // I shall now retire
 
     }
 
     public void moveForward() {
-        float newX = x + vx * dt;
+        float newX = getX() + getVx() * dt;
         newX = newX < 0 ? 0 : newX > rink.getWidth() ? rink.getWidth() : newX;
         setX(newX);
-        float newY = y + vy * dt;
+        float newY = getY() + getVy() * dt;
         newY = newY < 0 ? 0 : newY > rink.getHeight() ? rink.getHeight() : newY;
         setY(newY);
     }
 
-    public void resetTo(GoalSide side) {
-        vx = 0;
-        vy = 0;
+    void resetVel() {
+        setVx((float) Math.sin(Math.random() * 2f * Math.PI) * SPAWN_VELOCITY);
+        setVy((float) Math.sin(Math.random() * 2f * Math.PI) * SPAWN_VELOCITY);
+    }
 
-        y = rink.getHeight()/2f;
-        switch (side) {
-            case LEFT -> x = 110;
-            case RIGHT -> x = rink.getWidth() - 110;
+    public void resetTo(Player player) {
+        resetVel();
+
+        setY(rink.getHeight() / 2f);
+        switch (player.getSide()) {
+            case LEFT -> setX(11/50f * rink.getWidth());
+            case RIGHT -> setX(rink.getWidth() - 11/50f * rink.getWidth());
         }
 
-        setLastCollidedWith(side);
+        setLastCollidedWith(player.getId());
     }
 
     // Drawing
@@ -197,12 +297,11 @@ public class Puck {
     public Circle draw() {
 
         Circle puckCircle = new Circle();
-        puckCircle.setRadius(radius);
-        puckCircle.setCenterX(x);
-        puckCircle.setCenterY(y);
+        puckCircle.setRadius(getRadius());
+        puckCircle.setCenterX(getX());
+        puckCircle.setCenterY(getY());
         puckCircle.setStyle("-fx-fill: black;");
 
         return puckCircle;
     }
-
 }
