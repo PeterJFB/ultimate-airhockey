@@ -22,4 +22,87 @@ public class PuckTest {
             Puck puck = new Puck(10, 6, 0, 0, rink, 1);
         });
     }
+
+    @Test
+    @DisplayName("Collisions with player")
+    public void testCollisionWithPlayer() {
+        Rink rink = new Rink(1000, 600);
+
+        Puck puck2 = new Puck(rink.playerRight.getX() - rink.playerRight.getRadius() - 10.001f, rink.playerRight.getY(), 10f, 0f, rink, 10f, "testPuck2");
+        rink.pucks.add(puck2);
+        Assertions.assertFalse(puck2.isCollidingWith(rink.playerRight),
+                "Place a puck close but not touching player");
+
+        rink.tick();
+        Assertions.assertTrue(puck2.isCollidingWith(rink.playerRight),
+                "Move puck towards player. They should now be colliding");
+
+        rink.tick();
+        Assertions.assertTrue(puck2.getX() + puck2.getRadius() > rink.playerRight.getX() - rink.playerRight.getRadius()  && !puck2.isCollidingWith(rink.playerRight),
+                "A puck right after touching a player should not collide a second time, even though they're still intersecting");
+
+        Puck puck3 = new Puck(rink.playerRight.getX() - rink.playerRight.getRadius() - 10f, rink.playerRight.getY(), 10f, 0f, rink, 10f, "testPuck3");
+        rink.pucks.add(puck3);
+        Assertions.assertTrue(puck3.isCollidingWith(rink.playerRight),
+                "A puck touching the player should immediately count as colliding with them.");
+
+
+    }
+
+    @Test
+    @DisplayName("Collisions with another puck")
+    public void testCollisionWithPuck() {
+        Rink rink = new Rink(1000, 600);
+        Puck puck1 = rink.pucks.get(0);
+        puck1.setVy(0f);
+        puck1.setVx(0f);
+
+        Puck puck2 = new Puck(puck1.getX() + puck1.getRadius() + 10.0001f, puck1.getY(), -100f, 0f, rink, 10f, "testPuck2");
+        rink.pucks.add(puck2);
+        Assertions.assertFalse(puck2.isCollidingWith(puck1), "Place a puck close but not touching puck");
+
+        rink.tick();
+        Assertions.assertTrue(puck2.isCollidingWith(puck1), "Move puck towards the other. They should now be colliding");
+
+        Puck puck3 = new Puck(puck1.getX() - puck1.getRadius() - 10f, puck1.getY(), 10f, 0f, rink, 10f, "testPuck3");
+        rink.pucks.add(puck3);
+        Assertions.assertTrue(puck3.isCollidingWith(puck1), "A puck touching the puck should immediately as colliding with them.");
+    }
+
+    private float getEnergy(Puck puck) {
+        return 0.5f * puck.getMass() * (puck.getVx() * puck.getVx() + puck.getVy() * puck.getVy());
+    }
+
+    @Test
+    @DisplayName("Conservation of energy")
+    public void conservationOfEnergy() {
+        // Head on collision
+        Rink rink = new Rink(1000, 600);
+        Puck puck1 = rink.pucks.get(0);
+        puck1.setVy(0f);
+        puck1.setVx(0f);
+
+        Puck puck2 = new Puck(puck1.getX() + puck1.getRadius() + 10f, puck1.getY(), -10f, 0f, rink, 10f, "testPuck");
+        rink.pucks.add(puck2);
+
+        float energy = getEnergy(puck1) + getEnergy(puck2);
+        rink.tick();
+        Assertions.assertEquals(energy, getEnergy(puck1) + getEnergy(puck2), "Kinetic energy in a perfect \"Head on\" elastic collision with no friction should stay the same.");
+
+        // Angled collision
+        rink = new Rink(1000, 600);
+        puck1 = rink.pucks.get(0);
+        puck1.setVy(2f);
+        puck1.setVx(0f);
+
+        puck2 = new Puck(puck1.getX() + puck1.getRadius() + 8f, puck1.getY() + 5f, -10f, 0f, rink, 10f, "testPuck");
+        rink.pucks.add(puck2);
+
+        energy = getEnergy(puck1) + getEnergy(puck2);
+        rink.tick();
+
+        Assertions.assertEquals(energy, getEnergy(puck1) + getEnergy(puck2), "Kinetic energy in a perfect \"Head on\" elastic collision with no friction should stay the same.");
+
+    }
+
 }

@@ -80,7 +80,6 @@ public class Player extends PlayerControls implements circleObject {
     }
 
     public void setX(float x) {
-        System.out.println(radius);
         if (0 + radius > x || x > rink.getWidth() - radius)
             throw new IllegalArgumentException("X must be within bounds of rink (0 - " + rink.getWidth() + "): " + x);
         this.x = x;
