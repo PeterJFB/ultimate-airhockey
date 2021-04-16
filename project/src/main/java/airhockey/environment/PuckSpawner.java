@@ -1,4 +1,4 @@
-package airhockey;
+package airhockey.environment;
 
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
@@ -77,7 +77,7 @@ public class PuckSpawner implements circleObject {
             if (isCollidingWith(rink.playerLeft) || isCollidingWith(rink.playerRight)) {
                 return;
             }
-            Puck newPuck = new Puck(x, y, rink, radius);
+            Puck newPuck = new Puck(x, y, radius, rink);
             newPuck.resetVel();
             rink.pucks.add(newPuck);
             finished = true;
@@ -96,7 +96,7 @@ public class PuckSpawner implements circleObject {
         spawnArc.setStartAngle(90f);
         spawnArc.setType(ArcType.ROUND);
         spawnArc.setLength((initialSpawnTime - spawnTime) / initialSpawnTime * 360f);
-        spawnArc.setStyle("-fx-fill: black; -fx-opacity: 40%");
+        spawnArc.getStyleClass().add("puckSpawner");
 
         return spawnArc;
     }

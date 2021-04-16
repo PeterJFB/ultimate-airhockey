@@ -1,4 +1,4 @@
-package airhockey;
+package airhockey.environment;
 
 import java.util.HashMap;
 
@@ -6,6 +6,8 @@ public class TwoPlayerScoreBoard {
 
     private String player1Name;
     private String player2Name;
+
+    
 
     private final HashMap<String, Integer> scores;
 
@@ -62,4 +64,6 @@ public class TwoPlayerScoreBoard {
         else
             return "";
     }
+
+    // TODO: Test scores are updated correctly
 }

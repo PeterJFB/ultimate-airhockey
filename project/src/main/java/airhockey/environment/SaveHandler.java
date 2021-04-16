@@ -1,9 +1,7 @@
-package airhockey;
+package airhockey.environment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.fxml.FXML;
-import javafx.stage.FileChooser;
-import lib.SaveController;
+import airhockey.lib.SaveController;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -15,7 +13,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 
-class SaveHandler implements SaveController<Rink> {
+public class SaveHandler implements SaveController<Rink> {
 
     JSONParser parser = new JSONParser();
 
@@ -84,7 +82,7 @@ class SaveHandler implements SaveController<Rink> {
         float reachX = ((Double) playerObject.get("reachX")).floatValue();
         float reachY = ((Double) playerObject.get("reachY")).floatValue();
         String name = (String) playerObject.get("name");
-        GoalSide side = GoalSide.valueOf((String) playerObject.get("side"));
+        Side side = Side.valueOf((String) playerObject.get("side"));
 
         return new Player(x, y, vx, vy, originX, reachX, reachY, radius, side, name, rink);
     }
@@ -96,6 +94,6 @@ class SaveHandler implements SaveController<Rink> {
         float vy = ((Double) puckObject.get("vy")).floatValue();
         float radius = ((Double) puckObject.get("radius")).floatValue();
         String id = (String) puckObject.get("id");
-        return new Puck(x, y, vx, vy, rink, radius, id);
+        return new Puck(x, y, vx, vy, radius, id, rink);
     }
 }

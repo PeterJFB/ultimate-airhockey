@@ -1,4 +1,4 @@
-package airhockey;
+package airhockey.environment;
 
 public class CountDown {
     private final int startTime;
@@ -44,5 +44,5 @@ public class CountDown {
         if (!isFinished())
             time =  getTime() - timeIntervalInSeconds;
     }
-
+// TODO: Two tests?
 }

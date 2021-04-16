@@ -1,15 +1,16 @@
 package airhockey;
 
+import airhockey.environment.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import lib.SaveController;
+import airhockey.lib.SaveController;
 
 import java.io.File;
 import java.util.Map;
@@ -22,8 +23,8 @@ public class GameController {
     Timer timer = new Timer(true);
     TimerTask task = null;
 
-    final SaveController<Rink> saveHandler = new airhockey.SaveHandler();
-    FileChooser fileChooser = new FileChooser();
+    final SaveController<Rink> saveHandler = new SaveHandler();
+    final FileChooser fileChooser = new FileChooser();
 
     @FXML
     private AnchorPane root;
@@ -50,26 +51,39 @@ public class GameController {
 
         rinkPane.setPrefWidth(rink.getWidth());
         rinkPane.setPrefHeight(rink.getHeight());
-        playerLeftNameText.setText(rink.playerLeft.getName());
-        playerRightNameText.setText(rink.playerRight.getName());
+        playerLeftNameText.setText("Player 1");
+        playerRightNameText.setText("Player 2");
 
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
 
         drawGame();
     }
 
+
+    // TODO: Ideally should every association rink be default aka not available to GameController
     public void drawGame() {
+        /*
+        * The game uses no canvas, even though it would most likely be more optimized as game graphics. This was
+        * intentionally avoided since I already have experience with its equivalent library in javascript, and I wanted
+        * to explore the different elements in javaFX. It also reduces numbers of lines in java (which i think i have
+        * enough of already:) ), since i can use CSS to style them instead.
+        * */
+
         rinkPane.getChildren().clear();
 
-        rinkPane.getChildren().add(rink.playerLeft.draw());
-        rinkPane.getChildren().add(rink.playerRight.draw());
-        for (Puck puck : rink.pucks) {
-            rinkPane.getChildren().add(puck.draw());
+        for (Node e : rink.generateSnapshot()) {
+            rinkPane.getChildren().add(e);
         }
-        rinkPane.getChildren().add(rink.goalLeft.draw());
-        rinkPane.getChildren().add(rink.goalRight.draw());
-        if (rink.puckSpawner != null)
-            rinkPane.getChildren().add(rink.puckSpawner.draw());
+
+//        rinkPane.getChildren().add(rink.playerLeft.draw());
+//        rinkPane.getChildren().add(rink.playerRight.draw());
+//        for (Puck puck : rink.pucks) {
+//            rinkPane.getChildren().add(puck.draw());
+//        }
+//        rinkPane.getChildren().add(rink.goalLeft.draw());
+//        rinkPane.getChildren().add(rink.goalRight.draw());
+//        if (rink.puckSpawner != null)
+//            rinkPane.getChildren().add(rink.puckSpawner.draw());
 
         Map<String, Integer> currentScore = rink.scoreBoard.getScore();
         scoreText.setText(currentScore.get(rink.playerLeft.getName()) + " - " + currentScore.get(rink.playerRight.getName()));
@@ -82,77 +96,63 @@ public class GameController {
 
     public void handleKeyPress(KeyEvent keyEvent) {
 
-        // Player 1
-        if (keyEvent.getCode() == KeyCode.W) {
-            rink.playerLeft.setPressingUp(true);
-            rink.playerLeft.setPressingDown(false);
-        }
-        if (keyEvent.getCode() == KeyCode.S) {
-            rink.playerLeft.setPressingUp(false);
-            rink.playerLeft.setPressingDown(true);
-        }
-        if (keyEvent.getCode() == KeyCode.A) {
-            rink.playerLeft.setPressingLeft(true);
-            rink.playerLeft.setPressingRight(false);
-        }
-        if (keyEvent.getCode() == KeyCode.D) {
-            rink.playerLeft.setPressingLeft(false);
-            rink.playerLeft.setPressingRight(true);
-        }
+        switch (keyEvent.getCode()) {
+            // Player 1
+            case W -> {
+                rink.setPlayerPressing(Side.LEFT, Direction.UP, true);
+                rink.setPlayerPressing(Side.LEFT, Direction.DOWN, false);
+            }
+            case S -> {
+                rink.setPlayerPressing(Side.LEFT, Direction.UP, false);
+                rink.setPlayerPressing(Side.LEFT, Direction.DOWN, true);
+            }
+            case A -> {
+                rink.setPlayerPressing(Side.LEFT, Direction.LEFT, true);
+                rink.setPlayerPressing(Side.LEFT, Direction.RIGHT, false);
+            }
+            case D -> {
+                rink.setPlayerPressing(Side.LEFT, Direction.LEFT, false);
+                rink.setPlayerPressing(Side.LEFT, Direction.RIGHT, true);
+            }
 
-        // Player 2
-        if (keyEvent.getCode() == KeyCode.I) {
-            rink.playerRight.setPressingUp(true);
-            rink.playerRight.setPressingDown(false);
-        }
-        if (keyEvent.getCode() == KeyCode.K) {
-            rink.playerRight.setPressingUp(false);
-            rink.playerRight.setPressingDown(true);
-        }
-        if (keyEvent.getCode() == KeyCode.J) {
-            rink.playerRight.setPressingLeft(true);
-            rink.playerRight.setPressingRight(false);
-        }
-        if (keyEvent.getCode() == KeyCode.L) {
-            rink.playerRight.setPressingLeft(false);
-            rink.playerRight.setPressingRight(true);
-        }
-        if (keyEvent.getCode() == KeyCode.ENTER) {
-            playGame();
-        }
-        if (keyEvent.getCode() == KeyCode.P) {
-            rink.spawnNewPuck();
+            // Player 2
+            case I -> {
+                rink.setPlayerPressing(Side.RIGHT, Direction.UP, true);
+                rink.setPlayerPressing(Side.RIGHT, Direction.DOWN, false);
+            }
+            case K -> {
+                rink.setPlayerPressing(Side.RIGHT, Direction.UP, false);
+                rink.setPlayerPressing(Side.RIGHT, Direction.DOWN, true);
+
+            }
+            case J -> {
+                rink.setPlayerPressing(Side.RIGHT, Direction.LEFT, true);
+                rink.setPlayerPressing(Side.RIGHT, Direction.RIGHT, false);
+            }
+            case L -> {
+                rink.setPlayerPressing(Side.RIGHT, Direction.LEFT, false);
+                rink.setPlayerPressing(Side.RIGHT, Direction.RIGHT, true);
+            }
+            // Other
+            case ENTER -> playGame();
+            case P -> rink.spawnNewPuck();
         }
 
     }
 
     public void handleKeyRelease(KeyEvent keyEvent) {
-        // Player 1
-        if (keyEvent.getCode() == KeyCode.W) {
-            rink.playerLeft.setPressingUp(false);
-        }
-        if (keyEvent.getCode() == KeyCode.S) {
-            rink.playerLeft.setPressingDown(false);
-        }
-        if (keyEvent.getCode() == KeyCode.A) {
-            rink.playerLeft.setPressingLeft(false);
-        }
-        if (keyEvent.getCode() == KeyCode.D) {
-            rink.playerLeft.setPressingRight(false);
-        }
+        switch (keyEvent.getCode()) {
+            // Player 1
+            case W -> rink.setPlayerPressing(Side.LEFT, Direction.UP, false);
+            case S -> rink.setPlayerPressing(Side.LEFT, Direction.DOWN, false);
+            case A -> rink.setPlayerPressing(Side.LEFT, Direction.LEFT, false);
+            case D -> rink.setPlayerPressing(Side.LEFT, Direction.RIGHT, false);
 
-        // Player 2
-        if (keyEvent.getCode() == KeyCode.I) {
-            rink.playerRight.setPressingUp(false);
-        }
-        if (keyEvent.getCode() == KeyCode.K) {
-            rink.playerRight.setPressingDown(false);
-        }
-        if (keyEvent.getCode() == KeyCode.J) {
-            rink.playerRight.setPressingLeft(false);
-        }
-        if (keyEvent.getCode() == KeyCode.L) {
-            rink.playerRight.setPressingRight(false);
+            // Player 2
+            case I -> rink.setPlayerPressing(Side.RIGHT, Direction.UP, false);
+            case K -> rink.setPlayerPressing(Side.RIGHT, Direction.DOWN, false);
+            case J -> rink.setPlayerPressing(Side.RIGHT, Direction.LEFT, false);
+            case L -> rink.setPlayerPressing(Side.RIGHT, Direction.RIGHT, false);
         }
     }
 
@@ -162,7 +162,7 @@ public class GameController {
         // Create clock to run game
         if (task != null)
             task.cancel();
-        task = new TimerTask() {
+        task = new TimerTask() { // TODO: Maybe make clock inside Rink and have GameController as observer.
             @Override
             public void run() {
                 Platform.runLater(() -> {
@@ -179,7 +179,6 @@ public class GameController {
         };
         timer.scheduleAtFixedRate(task, 0, rink.getTickInterval());
 
-
         // Update state of buttons
         startAndPauseButton.setOnAction(actionEvent -> pauseGame());
         startAndPauseButton.setText("Pause");
@@ -187,7 +186,8 @@ public class GameController {
 
     public void pauseGame() {
         // stop task
-        task.cancel();
+        if (task != null)
+            task.cancel();
         // Update state of buttons
         startAndPauseButton.setOnAction(actionEvent -> playGame());
         startAndPauseButton.setText("Resume");
@@ -228,7 +228,7 @@ public class GameController {
             if (file != null)
                 saveHandler.save(file.getAbsolutePath(), rink);
 
-        } catch (Exception e) {
+        } catch (Exception e) { // Maybe move this inside save
             System.err.println("Attempted to write to file but an error occurred.");
             throw e;
         }

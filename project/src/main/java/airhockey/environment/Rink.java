@@ -1,4 +1,6 @@
-package airhockey;
+package airhockey.environment;
+
+import javafx.scene.Node;
 
 import java.util.*;
 
@@ -11,11 +13,12 @@ public class Rink {
     private final int minWidth = 100;
     private final int minHeight = 100;
 
-    // Props
+    // Items in rink (Delegates)
     public Player playerLeft;
     public Player playerRight;
 
     public List<Puck> pucks = new ArrayList<>();
+    public PuckSpawner puckSpawner;
 
     public Goal goalLeft;
     public Goal goalRight;
@@ -26,23 +29,22 @@ public class Rink {
     // Logic
     private final int puckSpawnRate = 10; // n per minute
     private final long tickInterval = 10; // ms per tick
-    public PuckSpawner puckSpawner;
 
     // Constructor for initializing game and loading files
     public Rink(int width, int height) {
         setWidth(width);
         setHeight(height);
 
-        playerLeft = new Player(6f/100f * getWidth(), this, 4f/10f * getWidth(), 24/1000f * getWidth(), GoalSide.LEFT, "Player 1");
-        playerRight = new Player(width - 6f/100f * getWidth(), this, 4f/10f * getWidth(), 24/1000f * getWidth(), GoalSide.RIGHT, "Player 2");
+        playerLeft = new Player(6f/100f * getWidth(), this, 4f/10f * getWidth(), 24/1000f * getWidth(), Side.LEFT, "Player 1");
+        playerRight = new Player(width - 6f/100f * getWidth(), this, 4f/10f * getWidth(), 24/1000f * getWidth(), Side.RIGHT, "Player 2");
 
-        goalLeft = new Goal(GoalSide.LEFT, 8f/30f * getHeight(), this);
-        goalRight = new Goal(GoalSide.RIGHT, 8f/30f * getHeight(), this);
+        goalLeft = new Goal(Side.LEFT, 8f/30f * getHeight(), this);
+        goalRight = new Goal(Side.RIGHT, 8f/30f * getHeight(), this);
 
         scoreBoard = new TwoPlayerScoreBoard(playerLeft.getName(), playerRight.getName());
         countDown = new CountDown(120, tickInterval / 1000f);
 
-        pucks.add(new Puck(this, 18));
+        pucks.add(new Puck(18, this));
     }
 
     // Main
@@ -150,18 +152,27 @@ public class Rink {
         }
     }
 
-    public void setPlayerLeft(Player playerLeft) {
+    void setPlayerLeft(Player playerLeft) {
         if (playerLeft == null) {
             throw new IllegalArgumentException("Player cannot be null.");
         }
         this.playerLeft = playerLeft;
     }
 
-    public void setPlayerRight(Player playerRight) {
+    void setPlayerRight(Player playerRight) {
         if (playerRight == null) {
             throw new IllegalArgumentException("Player cannot be null.");
         }
         this.playerRight = playerRight;
+    }
+
+    // Player movement
+
+    public void setPlayerPressing(Side side, Direction dir, boolean active) {
+        switch (side) {
+            case LEFT -> playerLeft.setPlayerPressing(dir, active);
+            case RIGHT -> playerRight.setPlayerPressing(dir, active);
+        }
     }
 
     // Puck spawning logic
@@ -178,4 +189,21 @@ public class Rink {
         pucks.clear();
     }
 
+    public Node[] generateSnapshot() {
+        Node[] drawings = new Node[4 + pucks.size() + (puckSpawner != null ? 1 : 0)];
+
+        drawings[0] = playerLeft.draw();
+        drawings[1] = playerRight.draw();
+        drawings[2] = goalLeft.draw();
+        drawings[3] = goalRight.draw();
+
+        for (int i=0; i<pucks.size(); i++) {
+            drawings[4+i] = pucks.get(i).draw();
+        }
+
+        if (puckSpawner != null)
+            drawings[drawings.length-1] = puckSpawner.draw();
+
+        return drawings;
+    }
 }

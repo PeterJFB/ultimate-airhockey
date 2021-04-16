@@ -1,4 +1,4 @@
-package lib;
+package airhockey.lib;
 
 import org.json.simple.parser.ParseException;
 

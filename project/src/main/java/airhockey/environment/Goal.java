@@ -1,7 +1,5 @@
-package airhockey;
+package airhockey.environment;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import javafx.scene.shape.Rectangle;
 
 public class Goal {
@@ -12,10 +10,10 @@ public class Goal {
     private final float centerY;
 
     // Other
-    private final GoalSide side;
+    private final Side side;
     private final Rink rink;
 
-    public Goal(GoalSide side, float size, float centerY, Rink rink) {
+    public Goal(Side side, float size, float centerY, Rink rink) {
         this.rink = rink;
         this.side = side;
         setSize(size);
@@ -24,7 +22,7 @@ public class Goal {
 
     // Getters and Setters
 
-    public Goal(GoalSide side, float size, Rink rink) {
+    public Goal(Side side, float size, Rink rink) {
         this(side, size, (float) rink.getHeight()/2, rink);
     }
 
@@ -36,7 +34,7 @@ public class Goal {
         return width;
     }
 
-    public GoalSide getSide() {
+    public Side getSide() {
         return side;
     }
 
@@ -76,4 +74,6 @@ public class Goal {
 
         return goalRectangle;
     }
+
+    // TODO: test if goals are firing as theyr'e meant to
 }

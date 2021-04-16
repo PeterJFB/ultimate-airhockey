@@ -1,4 +1,4 @@
-package airhockey;
+package airhockey.environment;
 
 import javafx.scene.shape.Circle;
 
@@ -23,7 +23,7 @@ public class Puck implements circleObject {
     private String lastCollidedWith = "";
     private String id;
 
-    public Puck(float x, float y, float vx, float vy, Rink rink, float radius, String id) {
+    public Puck(float x, float y, float vx, float vy, float radius, String id, Rink rink) {
         this.rink = rink;
 
         setRadius(radius);
@@ -37,17 +37,17 @@ public class Puck implements circleObject {
         dt = rink.getTickInterval() / 1000f;
     }
 
-    public Puck(float x, float y, float vx, float vy, Rink rink, float radius) {
-        this(x, y, vx, vy, rink, radius, "");
+    public Puck(float x, float y, float vx, float vy, float radius, Rink rink) {
+        this(x, y, vx, vy, radius, "", rink);
     }
 
 
-    public Puck(float x, float y, Rink rink, float radius) {
-        this(x, y, 0, 0, rink, radius);
+    public Puck(float x, float y, float radius, Rink rink) {
+        this(x, y, 0, 0, radius, rink);
     }
 
-    public Puck(Rink rink, float radius) {
-        this(rink.getWidth()/2f, rink.getHeight()/2f, 0, 0, rink, radius);
+    public Puck(float radius, Rink rink) {
+        this(rink.getWidth()/2f, rink.getHeight()/2f, 0, 0, radius, rink);
         resetTo(rink.playerLeft);
     }
 
@@ -300,7 +300,6 @@ public class Puck implements circleObject {
         puckCircle.setRadius(getRadius());
         puckCircle.setCenterX(getX());
         puckCircle.setCenterY(getY());
-        puckCircle.setStyle("-fx-fill: black;");
 
         return puckCircle;
     }

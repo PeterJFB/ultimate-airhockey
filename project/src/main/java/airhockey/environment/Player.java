@@ -1,8 +1,6 @@
-package airhockey;
+package airhockey.environment;
 
 import javafx.scene.shape.Circle;
-
-import java.lang.reflect.Method;
 
 public class Player extends PlayerControls implements circleObject {
 
@@ -25,7 +23,7 @@ public class Player extends PlayerControls implements circleObject {
     public final float mass = 20;
 
     // Other
-    private final GoalSide side;
+    private final Side side;
     private String name;
     private final Rink rink;
 
@@ -34,7 +32,7 @@ public class Player extends PlayerControls implements circleObject {
                   float originX,
                   float reachX, float reachY,
                   float radius,
-                  GoalSide side, String name, Rink rink) {
+                  Side side, String name, Rink rink) {
         super();
         this.rink = rink;
         setRadius(radius);
@@ -56,7 +54,7 @@ public class Player extends PlayerControls implements circleObject {
         this.name = name;
     }
 
-    public Player(float x, Rink rink, float reachX, float radius, GoalSide side, String name) {
+    public Player(float x, Rink rink, float reachX, float radius, Side side, String name) {
         this(x, rink.getHeight() / 2f,
                 0, 0, x,
                 reachX, rink.getHeight() / 2f - radius,
@@ -149,7 +147,7 @@ public class Player extends PlayerControls implements circleObject {
         this.reachY = reachY;
     }
 
-    public GoalSide getSide() {
+    public Side getSide() {
         return side;
     }
 
@@ -187,10 +185,10 @@ public class Player extends PlayerControls implements circleObject {
         if (pressingDown) {
             moveDown();
         }
-        if (pressingLeft && side == GoalSide.RIGHT) {
+        if (pressingLeft && side == Side.RIGHT) {
             moveLeft();
         }
-        if (pressingRight && side == GoalSide.LEFT) {
+        if (pressingRight && side == Side.LEFT) {
             moveRight();
         }
 
@@ -219,7 +217,7 @@ public class Player extends PlayerControls implements circleObject {
         }
 
         // Horizontal
-        if (pressingLeft && side == GoalSide.RIGHT || pressingRight && side == GoalSide.LEFT) {
+        if (pressingLeft && side == Side.RIGHT || pressingRight && side == Side.LEFT) {
             x += getVx() * dt;
         } else {
             // If no horizontal input, move player towards origin
@@ -269,7 +267,7 @@ public class Player extends PlayerControls implements circleObject {
         playerCircle.setRadius(radius);
         playerCircle.setCenterX(x);
         playerCircle.setCenterY(y);
-        playerCircle.setStyle("-fx-fill: #E53935; -fx-border-color: black; -fx-border-width: 20px;");
+        playerCircle.getStyleClass().add("player");
 
         return playerCircle;
     }

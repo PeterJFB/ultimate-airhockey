@@ -22,10 +22,18 @@
 .key {
     -fx-background-color: none;
     -fx-border-color: #E1F5FE;
-    -fx-border-width: 4
- ;
+    -fx-border-width: 4;
 }
 
 .keyText {
     -fx-text-fill: #E1F5FE;
+}
+
+.player {
+    -fx-fill: #E53935;
+}
+
+.puckSpawner {
+    -fx-fill: black;
+    -fx-opacity: 40%;
 }
