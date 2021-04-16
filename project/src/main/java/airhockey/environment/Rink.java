@@ -14,17 +14,17 @@ public class Rink {
     private final int minHeight = 100;
 
     // Items in rink (Delegates)
-    public Player playerLeft;
-    public Player playerRight;
+    Player playerLeft;
+    Player playerRight;
 
-    public List<Puck> pucks = new ArrayList<>();
-    public PuckSpawner puckSpawner;
+    List<Puck> pucks = new ArrayList<>();
+    PuckSpawner puckSpawner;
 
-    public Goal goalLeft;
-    public Goal goalRight;
+    Goal goalLeft;
+    Goal goalRight;
 
-    public TwoPlayerScoreBoard scoreBoard;
-    public CountDown countDown;
+    TwoPlayerScoreBoard scoreBoard;
+    CountDown countDown;
 
     // Logic
     private final int puckSpawnRate = 10; // n per minute
@@ -193,7 +193,7 @@ public class Rink {
 
     // Puck spawning logic
 
-    public boolean shouldNewPuckSpawn() {
+    private boolean shouldNewPuckSpawn() {
         return Math.random() < getTickInterval()/1000f * puckSpawnRate/60f;
     }
 
@@ -201,7 +201,7 @@ public class Rink {
         puckSpawner = new PuckSpawner(this, 1);
     }
 
-    public void clearPucks() {
+    void clearPucks() {
         pucks.clear();
     }
 

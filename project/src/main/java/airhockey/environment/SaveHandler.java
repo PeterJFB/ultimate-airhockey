@@ -13,16 +13,34 @@ import java.io.*;
 public class SaveHandler implements SaveController<Rink> {
 
     @Override
-    public void save(String path, Rink object) throws IOException {
+    public void save(String path, Rink rink) throws IOException {
         // https://gitlab.stud.idi.ntnu.no/tdt4100/v2021/students/-/blob/master/foreksempel/src/main/java/of10/lf/SaveHandler.java
         if (path == null || path.isBlank())
             throw new IllegalArgumentException("Path cannot be null or blank: " + path);
-        if (object == null)
-            throw new IllegalArgumentException("Object cannot be null");
+        if (rink == null)
+            throw new IllegalArgumentException("rink cannot be null");
 
-        FileOutputStream fos = new FileOutputStream(path.endsWith(".json") ? path : path + ".json");
-        (new ObjectMapper()).writeValue(fos, object);
-        fos.close();
+        JSONObject rinkObject = new JSONObject();
+        rinkObject.put("width", rink.getWidth());
+        rinkObject.put("height", rink.getHeight());
+
+        rinkObject.put("playerLeft", getJSONObjectFromPlayer(rink.playerLeft));
+        rinkObject.put("playerRight", getJSONObjectFromPlayer(rink.playerRight));
+
+        JSONArray puckArray = new JSONArray();
+        for (Puck puck : rink.pucks) {
+            puckArray.put(getJSONObjectFromPuck(puck));
+        }
+        rinkObject.put("pucks", puckArray);
+
+        rinkObject.put("scoreBoard", getJSONObjectFromScoreBoard(rink.scoreBoard));
+        rinkObject.put("time", rink.countDown.getTime());
+
+        System.out.println(rinkObject);
+
+        PrintWriter outFile = new PrintWriter(path);
+        outFile.println(rinkObject);
+        outFile.close();
 
     }
 
@@ -33,10 +51,8 @@ public class SaveHandler implements SaveController<Rink> {
         if (path == null || path.isBlank())
             throw new IllegalArgumentException("Path cannot be null or blank: " + path);
 
-        FileReader fr = new FileReader(path);
-
         // https://www.baeldung.com/java-org-json
-        JSONTokener tokener = new JSONTokener(fr);
+        JSONTokener tokener = new JSONTokener(new FileReader(path));
         JSONObject jsonObject = new JSONObject(tokener);
 
         int width = jsonObject.getInt("width");
@@ -45,8 +61,8 @@ public class SaveHandler implements SaveController<Rink> {
         rink = new Rink(width, height);
 
         // Player
-        Player playerLeft = getPlayerFromJSONObject((JSONObject) jsonObject.get("playerLeft"), rink);
-        Player playerRight = getPlayerFromJSONObject((JSONObject) jsonObject.get("playerRight"), rink);
+        Player playerLeft = getPlayerFromJSONObject(jsonObject.getJSONObject("playerLeft"), rink);
+        Player playerRight = getPlayerFromJSONObject(jsonObject.getJSONObject("playerRight"), rink);
 
         rink.setPlayer(Side.LEFT, playerLeft);
         rink.setPlayer(Side.RIGHT, playerRight);
@@ -58,12 +74,11 @@ public class SaveHandler implements SaveController<Rink> {
             rink.pucks.add(getPuckFromJSONObject((JSONObject) puckObject, rink));
         }
 
-        JSONObject scoreBoardObject = jsonObject.getJSONObject("scoreBoard").getJSONObject("scores");
+        JSONObject scoreBoardObject = jsonObject.getJSONObject("scoreBoard");
         rink.scoreBoard.addScore(Side.LEFT, scoreBoardObject.getInt(Side.LEFT.name()));
         rink.scoreBoard.addScore(Side.RIGHT, scoreBoardObject.getInt(Side.RIGHT.name()));
 
-        JSONObject countDownObject = jsonObject.getJSONObject("countDown");
-        rink.countDown.setTime(countDownObject.getFloat("time"));
+        rink.countDown.setTime(jsonObject.getFloat("time"));
 
         return rink;
     }
@@ -80,9 +95,27 @@ public class SaveHandler implements SaveController<Rink> {
 
     private JSONObject getJSONObjectFromPuck(Puck puck) {
         JSONObject puckObject = getJSONObjectFromDiskObject(puck);
-        puckObject.put("Id", puck.getId());
+        puckObject.put("id", puck.getId());
 
         return puckObject;
+    }
+    
+    private JSONObject getJSONObjectFromPlayer(Player player) {
+        JSONObject playerObject = getJSONObjectFromDiskObject(player);
+        playerObject.put("id", player.getId());
+        playerObject.put("originX", player.getOriginX());
+        playerObject.put("reachX", player.getReachX());
+        playerObject.put("reachY", player.getReachY());
+        playerObject.put("name", player.getName());
+        playerObject.put("side", player.getSide());
+        return playerObject;
+    }
+
+    private JSONObject getJSONObjectFromScoreBoard(TwoPlayerScoreBoard scoreBoard) {
+        JSONObject object = new JSONObject();
+        object.put(Side.LEFT.name(), scoreBoard.getScoreOf(Side.LEFT));
+        object.put(Side.RIGHT.name(), scoreBoard.getScoreOf(Side.RIGHT));
+        return object;
     }
 
     private Player getPlayerFromJSONObject(JSONObject playerObject, Rink rink) {
