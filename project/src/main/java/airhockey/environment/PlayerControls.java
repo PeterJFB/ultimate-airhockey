@@ -2,7 +2,8 @@ package airhockey.environment;
 
 abstract class PlayerControls {
     /*
-     * Convert discrete events to continuous values which Player-class can rely on.
+     * The class converts discrete events to continuous values which Player-class can rely on.
+     * No tests are written since other classes was deemed more critical.
      * */
 
     boolean pressingUp = false;

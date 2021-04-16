@@ -18,7 +18,7 @@ class PuckSpawner implements diskObject {
 
     // Other
     private final Rink rink;
-
+// TODO: Refactor to use countdown?
     public PuckSpawner(Rink rink, int spawnTime) {
         this.rink = rink;
         this.x = ranRange(spawnMargin, rink.getWidth() - spawnMargin);

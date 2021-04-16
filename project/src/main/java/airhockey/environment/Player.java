@@ -68,8 +68,8 @@ class Player extends PlayerControls implements diskObject {
     }
 
     private void setRadius(float radius) {
-        if (radius < 0)
-            throw new IllegalArgumentException("Radius cannot be negative: " + radius);
+        if (radius <= 0)
+            throw new IllegalArgumentException("Radius must be a positive number: " + radius);
         this.radius = radius;
     }
 
@@ -132,7 +132,7 @@ class Player extends PlayerControls implements diskObject {
     }
 
     public void setReachX(float reachX) {
-        if (reachX < 0)
+        if (reachX <= 0)
             throw new IllegalArgumentException("reachX has to be positive: " + reachX);
         this.reachX = reachX;
     }
@@ -142,7 +142,7 @@ class Player extends PlayerControls implements diskObject {
     }
 
     public void setReachY(float reachY) {
-        if (reachY < 0)
+        if (reachY <= 0)
             throw new IllegalArgumentException("reachY has to be positive: " + reachY);
         this.reachY = reachY;
     }
@@ -174,6 +174,15 @@ class Player extends PlayerControls implements diskObject {
     }
 
     // Movement
+
+    /*
+     * There has been written no tests for this code, as a lot of this is highly customized for this game, and
+     * might change at any time. They've instead been through a process of game testing and adjusting to make sure they
+     * FEEL as intended.
+     * Worst error that can arise here i a division by zero, but in every case where this can happen, exists an if-clause
+     * right before to negate the issue.
+     * */
+
 
     public void updateMovement() {
 

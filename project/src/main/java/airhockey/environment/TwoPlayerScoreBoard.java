@@ -24,13 +24,9 @@ class TwoPlayerScoreBoard {
         return scores.get(side);
     }
 
-    public HashMap<Side, Integer> getScores() {
-        return new HashMap<>(scores);
-    }
-
     public Side getWinner() {
-        int playerLeftScore = scores.get(Side.LEFT);
-        int playerRightScore = scores.get(Side.RIGHT);
+        int playerLeftScore = getScoreOf(Side.LEFT);
+        int playerRightScore = getScoreOf(Side.RIGHT);
 
         if (playerLeftScore > playerRightScore)
             return Side.LEFT;
@@ -39,6 +35,4 @@ class TwoPlayerScoreBoard {
         else
             return null;
     }
-
-    // TODO: Test scores are updated correctly
 }

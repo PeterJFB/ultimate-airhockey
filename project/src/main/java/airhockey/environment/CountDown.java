@@ -7,20 +7,20 @@ class CountDown {
 
     public CountDown(int startTime, float timeIntervalInSeconds) {
         if (startTime <= 0) {
-            throw new IllegalArgumentException("startTime must be a positive integer: " + startTime);
+            throw new IllegalArgumentException("startTime must be a non-negative integer: " + startTime);
         }
         this.startTime = startTime;
         this.time = startTime;
 
         if (timeIntervalInSeconds <= 0) {
-            throw new IllegalArgumentException("timeIntervalInSeconds must be a non-negative number: " + timeIntervalInSeconds);
+            throw new IllegalArgumentException("timeIntervalInSeconds must be a positive number: " + timeIntervalInSeconds);
         }
         this.timeIntervalInSeconds = timeIntervalInSeconds;
     }
 
     // Getters and Setters
 
-    public int getTimeInSeconds() {
+    public int getTimeInWholeSeconds() {
         return (int) Math.ceil(getTime());
     }
 
@@ -29,8 +29,8 @@ class CountDown {
     }
 
     public void setTime(float time) {
-        if (time <= 0)
-            throw new IllegalArgumentException("Time left must be positive: " + time);
+        if (time < 0)
+            throw new IllegalArgumentException("Time left must be non-negative: " + time);
         this.time = time;
     }
 
@@ -43,6 +43,7 @@ class CountDown {
     public void tick() {
         if (!isFinished())
             time =  getTime() - timeIntervalInSeconds;
+            if (time < 0)
+                time = 0;
     }
-// TODO: Two tests?
 }

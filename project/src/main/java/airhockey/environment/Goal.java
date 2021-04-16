@@ -7,7 +7,7 @@ class Goal {
     // Dimensions
     private float size;
     private final float width = 20;
-    private final float centerY;
+    private float centerY;
 
     // Other
     private final Side side;
@@ -17,7 +17,7 @@ class Goal {
         this.rink = rink;
         this.side = side;
         setSize(size);
-        this.centerY = centerY;
+        setCenterY(centerY);
     }
 
     // Getters and Setters
@@ -38,15 +38,21 @@ class Goal {
         return side;
     }
 
-    private float getCenterY() {
-        return centerY;
-    }
-
     public void setSize(float size) {
         if (size > rink.getHeight()) {
             throw new IllegalArgumentException(String.format("Goal cannot be larger than rink: (size: %s, goal: %s)", rink.getHeight(), size));
         }
         this.size = size;
+    }
+
+    private float getCenterY() {
+        return centerY;
+    }
+
+    public void setCenterY(float centerY) {
+        if (centerY - size/2f < 0 || size/2f + centerY > rink.getHeight())
+            throw new IllegalArgumentException("Goal is not within bounds of rink: (center: " + centerY + ", size: " + size + ")");
+        this.centerY = centerY;
     }
 
     public boolean isGoal (Puck puck) {
@@ -67,13 +73,11 @@ class Goal {
         goalRectangle.setWidth(getWidth());
         goalRectangle.setHeight(getSize());
         switch (getSide()) {
-            case LEFT -> goalRectangle.setLayoutX(-getWidth()/2);
-            case RIGHT -> goalRectangle.setLayoutX(rink.getWidth()-getWidth()/2);
+            case LEFT -> goalRectangle.setLayoutX(-getWidth()/2f);
+            case RIGHT -> goalRectangle.setLayoutX(rink.getWidth()-getWidth()/2f);
         }
-        goalRectangle.setLayoutY(getCenterY()-getSize()/2);
+        goalRectangle.setLayoutY(getCenterY()-getSize()/2f);
 
         return goalRectangle;
     }
-
-    // TODO: test if goals are firing as theyr'e meant to
 }

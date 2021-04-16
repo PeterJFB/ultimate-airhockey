@@ -58,8 +58,6 @@ public class GameController {
         drawGame();
     }
 
-
-    // TODO: Ideally should every association rink be default aka not available to GameController
     public void drawGame() {
         /*
         * The game uses no canvas, even though it would most likely be more optimized as game graphics. This was
@@ -149,7 +147,7 @@ public class GameController {
         // Create clock to run game
         if (task != null)
             task.cancel();
-        task = new TimerTask() { // TODO: Maybe make clock inside Rink and have GameController as observer.
+        task = new TimerTask() {
             @Override
             public void run() {
                 Platform.runLater(() -> {
@@ -230,6 +228,10 @@ public class GameController {
             File file = fileChooser.showOpenDialog(startAndPauseButton.getScene().getWindow());
             if (file != null) {
                 rink = saveHandler.load(file.getAbsolutePath());
+                if (rink.isGameFinished()) {
+                    winnerText.setText(rink.getWinnerText());
+                    stopGame();
+                }
             }
             drawGame();
         } catch (Exception e) {

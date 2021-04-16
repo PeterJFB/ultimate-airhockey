@@ -144,7 +144,7 @@ public class Rink {
     }
 
     public int getTimeInSeconds() {
-        return countDown.getTimeInSeconds();
+        return countDown.getTimeInWholeSeconds();
     }
 
     TwoPlayerScoreBoard getScoreBoard() {
@@ -221,5 +221,9 @@ public class Rink {
             drawings[drawings.length-1] = puckSpawner.draw();
 
         return drawings;
+    }
+
+    public boolean isGameFinished() {
+        return countDown.isFinished();
     }
 }
