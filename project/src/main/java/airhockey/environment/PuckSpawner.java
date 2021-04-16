@@ -3,7 +3,7 @@ package airhockey.environment;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 
-public class PuckSpawner implements circleObject {
+class PuckSpawner implements circleObject {
 
     // Position
     private final float radius = 18;

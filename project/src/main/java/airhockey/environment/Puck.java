@@ -2,7 +2,7 @@ package airhockey.environment;
 
 import javafx.scene.shape.Circle;
 
-public class Puck implements circleObject {
+class Puck implements circleObject {
 
     // Position
     private float x;

@@ -1,6 +1,6 @@
 package airhockey.environment;
 
-public class CountDown {
+class CountDown {
     private final int startTime;
     private float time;
     private final float timeIntervalInSeconds;

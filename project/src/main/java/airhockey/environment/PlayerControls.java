@@ -1,6 +1,6 @@
 package airhockey.environment;
 
-public abstract class PlayerControls {
+abstract class PlayerControls {
     /*
      * Convert discrete events to continuous values which Player-class can rely on.
      * */

@@ -55,7 +55,6 @@ public class GameController {
         playerRightNameText.setText("Player 2");
 
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
-
         drawGame();
     }
 
@@ -75,20 +74,8 @@ public class GameController {
             rinkPane.getChildren().add(e);
         }
 
-//        rinkPane.getChildren().add(rink.playerLeft.draw());
-//        rinkPane.getChildren().add(rink.playerRight.draw());
-//        for (Puck puck : rink.pucks) {
-//            rinkPane.getChildren().add(puck.draw());
-//        }
-//        rinkPane.getChildren().add(rink.goalLeft.draw());
-//        rinkPane.getChildren().add(rink.goalRight.draw());
-//        if (rink.puckSpawner != null)
-//            rinkPane.getChildren().add(rink.puckSpawner.draw());
-
-        Map<String, Integer> currentScore = rink.scoreBoard.getScore();
-        scoreText.setText(currentScore.get(rink.playerLeft.getName()) + " - " + currentScore.get(rink.playerRight.getName()));
-
-        countDownText.setText("%02d".formatted(rink.countDown.getTimeInSeconds()));
+        scoreText.setText(rink.getScoreOf(Side.LEFT) + " - " + rink.getScoreOf(Side.RIGHT));
+        countDownText.setText("%02d".formatted(rink.getTimeInSeconds()));
 
     }
 

@@ -41,7 +41,7 @@ public class Rink {
         goalLeft = new Goal(Side.LEFT, 8f/30f * getHeight(), this);
         goalRight = new Goal(Side.RIGHT, 8f/30f * getHeight(), this);
 
-        scoreBoard = new TwoPlayerScoreBoard(playerLeft.getName(), playerRight.getName());
+        scoreBoard = new TwoPlayerScoreBoard();
         countDown = new CountDown(120, tickInterval / 1000f);
 
         pucks.add(new Puck(18, this));
@@ -83,7 +83,7 @@ public class Rink {
 
             // Update game status
             if (goalLeft.isGoal(puck)) {
-                scoreBoard.addScore(playerRight.getName(), 1);
+                scoreBoard.addScore(Side.RIGHT, 1);
                 puck.resetTo(playerLeft);
 
                 if (pucks.size() > 1) {
@@ -92,7 +92,7 @@ public class Rink {
             }
             else
             if (goalRight.isGoal(puck)) {
-                scoreBoard.addScore(playerLeft.getName(), 1);
+                scoreBoard.addScore(Side.RIGHT, 1);
                 puck.resetTo(playerRight);
 
                 if (pucks.size() > 1) {
@@ -143,27 +143,43 @@ public class Rink {
         return tickInterval;
     }
 
+    public int getTimeInSeconds() {
+        return countDown.getTimeInSeconds();
+    }
+
+    TwoPlayerScoreBoard getScoreBoard() {
+        return scoreBoard;
+    }
+
+    public int getScoreOf(Side side) {
+        return scoreBoard.getScoreOf(side);
+    }
+
     public String getWinnerText() {
-        String winner = scoreBoard.getWinner();
-        if (winner.isBlank()) {
+        Side winnerSide = scoreBoard.getWinner();
+        if (winnerSide == null) {
             return "Tie!";
         } else {
-            return winner + " won!";
+            return getPlayerNameOf(winnerSide) + " won!";
         }
     }
 
-    void setPlayerLeft(Player playerLeft) {
-        if (playerLeft == null) {
-            throw new IllegalArgumentException("Player cannot be null.");
-        }
-        this.playerLeft = playerLeft;
+    public String getPlayerNameOf(Side side) {
+        return switch (side) {
+            case LEFT -> playerLeft.getName();
+            case RIGHT -> playerRight.getName();
+        };
     }
 
-    void setPlayerRight(Player playerRight) {
-        if (playerRight == null) {
+    void setPlayer(Side side, Player player) {
+        if (player == null) {
             throw new IllegalArgumentException("Player cannot be null.");
         }
-        this.playerRight = playerRight;
+
+        switch (side) {
+            case LEFT -> this.playerLeft = player;
+            case RIGHT -> this.playerRight = player;
+        }
     }
 
     // Player movement

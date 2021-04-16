@@ -1,6 +1,6 @@
 package airhockey.environment;
 
-public interface circleObject {
+interface circleObject {
     float getX();
     float getY();
     float getRadius();

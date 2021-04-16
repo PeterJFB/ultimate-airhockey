@@ -45,13 +45,12 @@ public class SaveHandler implements SaveController<Rink> {
 
         rink = new Rink(width, height);
 
-
         // Player
         Player playerLeft = getPlayerFromJSONObject((JSONObject) jsonObject.get("playerLeft"), rink);
         Player playerRight = getPlayerFromJSONObject((JSONObject) jsonObject.get("playerRight"), rink);
 
-        rink.setPlayerLeft(playerLeft);
-        rink.setPlayerRight(playerRight);
+        rink.setPlayer(Side.LEFT, playerLeft);
+        rink.setPlayer(Side.RIGHT, playerRight);
 
         // Pucks
         rink.clearPucks();
@@ -60,11 +59,9 @@ public class SaveHandler implements SaveController<Rink> {
             rink.pucks.add(getPuckFromJSONObject((JSONObject) puckObject, rink));
         }
 
-        JSONObject scoreBoardObject = (JSONObject) ((JSONObject) jsonObject.get("scoreBoard")).get("score");
-        rink.scoreBoard.setPlayer1Name(rink.playerLeft.getName());
-        rink.scoreBoard.setPlayer2Name(rink.playerRight.getName());
-        rink.scoreBoard.addScore(rink.playerLeft.getName(), ((Long) scoreBoardObject.get(rink.playerLeft.getName())).intValue());
-        rink.scoreBoard.addScore(rink.playerRight.getName(), ((Long) scoreBoardObject.get(rink.playerRight.getName())).intValue());
+        JSONObject scoreBoardObject = (JSONObject) ((JSONObject) jsonObject.get("scoreBoard")).get("scores");
+        rink.scoreBoard.addScore(Side.LEFT, ((Long) scoreBoardObject.get(Side.LEFT.name())).intValue());
+        rink.scoreBoard.addScore(Side.RIGHT, ((Long) scoreBoardObject.get(Side.RIGHT.name())).intValue());
 
         JSONObject countDownObject = (JSONObject) jsonObject.get("countDown");
         rink.countDown.setTime(((Double) countDownObject.get("time")).floatValue());

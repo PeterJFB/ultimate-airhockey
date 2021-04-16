@@ -2,7 +2,7 @@ package airhockey.environment;
 
 import javafx.scene.shape.Rectangle;
 
-public class Goal {
+class Goal {
 
     // Dimensions
     private float size;
