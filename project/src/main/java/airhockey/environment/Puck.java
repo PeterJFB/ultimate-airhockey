@@ -2,7 +2,7 @@ package airhockey.environment;
 
 import javafx.scene.shape.Circle;
 
-class Puck implements circleObject {
+class Puck implements diskObject {
 
     // Position
     private float x;
@@ -143,7 +143,7 @@ class Puck implements circleObject {
         }
     }
 
-    private float getDistanceSquared(circleObject object) {
+    private float getDistanceSquared(diskObject object) {
         float dx = object.getX() - getX();
         float dy = object.getY() - getY();
 

@@ -3,7 +3,7 @@ package airhockey.environment;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 
-class PuckSpawner implements circleObject {
+class PuckSpawner implements diskObject {
 
     // Position
     private final float radius = 18;
@@ -50,7 +50,7 @@ class PuckSpawner implements circleObject {
 
     // Logic
 
-    private boolean isCollidingWith(circleObject object) {
+    private boolean isCollidingWith(diskObject object) {
         float dx = object.getX() - getX();
         float dy = object.getY() - getY();
 

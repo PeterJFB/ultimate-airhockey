@@ -3,26 +3,21 @@ package airhockey.environment;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import airhockey.lib.SaveController;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 public class SaveHandler implements SaveController<Rink> {
-
-    JSONParser parser = new JSONParser();
 
     @Override
     public void save(String path, Rink object) throws IOException {
         // https://gitlab.stud.idi.ntnu.no/tdt4100/v2021/students/-/blob/master/foreksempel/src/main/java/of10/lf/SaveHandler.java
         if (path == null || path.isBlank())
             throw new IllegalArgumentException("Path cannot be null or blank: " + path);
-        if (object == null || path.isBlank())
+        if (object == null)
             throw new IllegalArgumentException("Object cannot be null");
 
         FileOutputStream fos = new FileOutputStream(path.endsWith(".json") ? path : path + ".json");
@@ -32,16 +27,20 @@ public class SaveHandler implements SaveController<Rink> {
     }
 
     @Override
-    public Rink load(String path) throws IOException, ParseException {
+    public Rink load(String path) throws IOException {
         Rink rink;
 
-        // https://crunchify.com/how-to-read-json-object-from-file-in-java/
-        Object obj = parser.parse(new FileReader(path));
+        if (path == null || path.isBlank())
+            throw new IllegalArgumentException("Path cannot be null or blank: " + path);
 
-        JSONObject jsonObject = (JSONObject) obj;
+        FileReader fr = new FileReader(path);
 
-        int width = ((Long) jsonObject.get("width")).intValue();
-        int height = ((Long) jsonObject.get("height")).intValue();
+        // https://www.baeldung.com/java-org-json
+        JSONTokener tokener = new JSONTokener(fr);
+        JSONObject jsonObject = new JSONObject(tokener);
+
+        int width = jsonObject.getInt("width");
+        int height = jsonObject.getInt("height");
 
         rink = new Rink(width, height);
 
@@ -54,43 +53,60 @@ public class SaveHandler implements SaveController<Rink> {
 
         // Pucks
         rink.clearPucks();
-        JSONArray pucksArray = (JSONArray) jsonObject.get("pucks");
+        JSONArray pucksArray = jsonObject.getJSONArray("pucks");
         for (Object puckObject : pucksArray) {
             rink.pucks.add(getPuckFromJSONObject((JSONObject) puckObject, rink));
         }
 
-        JSONObject scoreBoardObject = (JSONObject) ((JSONObject) jsonObject.get("scoreBoard")).get("scores");
-        rink.scoreBoard.addScore(Side.LEFT, ((Long) scoreBoardObject.get(Side.LEFT.name())).intValue());
-        rink.scoreBoard.addScore(Side.RIGHT, ((Long) scoreBoardObject.get(Side.RIGHT.name())).intValue());
+        JSONObject scoreBoardObject = jsonObject.getJSONObject("scoreBoard").getJSONObject("scores");
+        rink.scoreBoard.addScore(Side.LEFT, scoreBoardObject.getInt(Side.LEFT.name()));
+        rink.scoreBoard.addScore(Side.RIGHT, scoreBoardObject.getInt(Side.RIGHT.name()));
 
-        JSONObject countDownObject = (JSONObject) jsonObject.get("countDown");
-        rink.countDown.setTime(((Double) countDownObject.get("time")).floatValue());
+        JSONObject countDownObject = jsonObject.getJSONObject("countDown");
+        rink.countDown.setTime(countDownObject.getFloat("time"));
 
         return rink;
     }
 
+    private JSONObject getJSONObjectFromDiskObject(diskObject diskObject) {
+        JSONObject object = new JSONObject();
+        object.put("x", diskObject.getX());
+        object.put("y", diskObject.getY());
+        object.put("vx", diskObject.getVx());
+        object.put("vy", diskObject.getVy());
+        object.put("radius", diskObject.getRadius());
+        return object;
+    }
+
+    private JSONObject getJSONObjectFromPuck(Puck puck) {
+        JSONObject puckObject = getJSONObjectFromDiskObject(puck);
+        puckObject.put("Id", puck.getId());
+
+        return puckObject;
+    }
+
     private Player getPlayerFromJSONObject(JSONObject playerObject, Rink rink) {
-        float x = ((Double) playerObject.get("x")).floatValue();
-        float y = ((Double) playerObject.get("y")).floatValue();
-        float vx = ((Double) playerObject.get("vx")).floatValue();
-        float vy = ((Double) playerObject.get("vy")).floatValue();
-        float radius = ((Double) playerObject.get("radius")).floatValue();
-        float originX = ((Double) playerObject.get("originX")).floatValue();
-        float reachX = ((Double) playerObject.get("reachX")).floatValue();
-        float reachY = ((Double) playerObject.get("reachY")).floatValue();
-        String name = (String) playerObject.get("name");
-        Side side = Side.valueOf((String) playerObject.get("side"));
+        float x = playerObject.getFloat("x");
+        float y = playerObject.getFloat("y");
+        float vx = playerObject.getFloat("vx");
+        float vy = playerObject.getFloat("vy");
+        float radius = playerObject.getFloat("radius");
+        float originX = playerObject.getFloat("originX");
+        float reachX = playerObject.getFloat("reachX");
+        float reachY = playerObject.getFloat("reachY");
+        String name = playerObject.getString("name");
+        Side side = Side.valueOf(playerObject.getString("side"));
 
         return new Player(x, y, vx, vy, originX, reachX, reachY, radius, side, name, rink);
     }
 
     private Puck getPuckFromJSONObject(JSONObject puckObject, Rink rink) {
-        float x = ((Double) puckObject.get("x")).floatValue();
-        float y = ((Double) puckObject.get("y")).floatValue();
-        float vx = ((Double) puckObject.get("vx")).floatValue();
-        float vy = ((Double) puckObject.get("vy")).floatValue();
-        float radius = ((Double) puckObject.get("radius")).floatValue();
-        String id = (String) puckObject.get("id");
+        float x = puckObject.getFloat("x");
+        float y = puckObject.getFloat("y");
+        float vx = puckObject.getFloat("vx");
+        float vy = puckObject.getFloat("vy");
+        float radius = puckObject.getFloat("radius");
+        String id = puckObject.getString("id");
         return new Puck(x, y, vx, vy, radius, id, rink);
     }
 }
