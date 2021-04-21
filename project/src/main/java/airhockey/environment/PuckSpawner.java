@@ -11,11 +11,12 @@ class PuckSpawner implements diskObject {
     private final float y;
 
     // Logic
-    private float spawnTime; // s
     private final float initialSpawnTime; // s
-    private final float spawnMargin = radius * 2;
+    private final float spawnMargin = radius * 2f;
     private boolean finished = false;
 
+    private CountDown countDown;
+    
     // Other
     private final Rink rink;
 // TODO: Refactor to use countdown?
@@ -23,8 +24,8 @@ class PuckSpawner implements diskObject {
         this.rink = rink;
         this.x = ranRange(spawnMargin, rink.getWidth() - spawnMargin);
         this.y = ranRange(spawnMargin, rink.getHeight() - spawnMargin);
-        this.initialSpawnTime = spawnTime;
-        this.spawnTime = initialSpawnTime;
+        initialSpawnTime = spawnTime;
+        countDown = new CountDown((int) initialSpawnTime, rink.getTickInterval() / 1000f);
     }
 
     // Getters and Setters
@@ -64,9 +65,8 @@ class PuckSpawner implements diskObject {
     }
 
     public void tick() {
-        spawnTime -= (float) rink.getTickInterval() / 1000f;
-        if (spawnTime <= 0) {
-            spawnTime = 0;
+    	countDown.tick();
+        if (countDown.isFinished()) {
 
             // Check for collision
             for (Puck puck : rink.pucks) {
@@ -81,7 +81,6 @@ class PuckSpawner implements diskObject {
             newPuck.resetVel();
             rink.pucks.add(newPuck);
             finished = true;
-
         }
     }
 
@@ -95,7 +94,7 @@ class PuckSpawner implements diskObject {
         spawnArc.setRadiusY(getRadius());
         spawnArc.setStartAngle(90f);
         spawnArc.setType(ArcType.ROUND);
-        spawnArc.setLength((initialSpawnTime - spawnTime) / initialSpawnTime * 360f);
+        spawnArc.setLength((initialSpawnTime - countDown.getTime()) / initialSpawnTime * 360f);
         spawnArc.getStyleClass().add("puckSpawner");
 
         return spawnArc;
