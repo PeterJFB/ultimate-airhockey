@@ -54,7 +54,7 @@ public class GameController {
         playerLeftNameText.setText("Player 1");
         playerRightNameText.setText("Player 2");
 
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(saveHandler.fileDescription(), saveHandler.accepts()));
         drawGame();
     }
 
@@ -208,7 +208,7 @@ public class GameController {
             // https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
             fileChooser.setTitle("Save game");
             // https://edencoding.com/stage-controller/
-            fileChooser.setInitialFileName("save.json");
+            fileChooser.setInitialFileName("save.pson");
             File file = fileChooser.showSaveDialog(startAndPauseButton.getScene().getWindow()); // Nasty workaround
             if (file != null)
                 saveHandler.save(file.getAbsolutePath(), rink);

@@ -9,4 +9,12 @@ public interface SaveController<T> {
 
     T load(String filename) throws IOException;
 
+    default String accepts() {
+        return "*.*";
+    }
+
+    default String fileDescription() {
+        return "(any)";
+    }
+
 }
