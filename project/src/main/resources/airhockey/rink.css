@@ -1,23 +1,28 @@
+
+.rink {
+
+}
+
 .button {
     -fx-background-color: white;
-    -fx-border-color: #202020;
+    -fx-border-color: #181818;
     -fx-border-width: 7;
     -fx-border-radius: 10;
     -fx-border-insets: -2;
     -fx-background-radius: 15;
     -fx-pref-width: 120;
+    -fx-effect: dropshadow(three-pass-box, black, 10, 0, 0, 3);
 }
 
 .button:pressed {
-    -fx-background-color: #202020;
-    -fx-border-color: white;
-    -fx-text-fill: white;
+    -fx-effect: none;
+    -fx-translate-y: 3;
 }
 
 .fileButton {
     -fx-border-width: 4;
+    -fx-effect: dropshadow(three-pass-box, black, 10, 0, 0, 3);
 }
-
 
 .key {
     -fx-background-color: none;
@@ -29,8 +34,24 @@
     -fx-text-fill: #E1F5FE;
 }
 
+.puck {
+    -fx-fill: #3b3b3b;
+    -fx-effect: dropshadow(three-pass-box, black, 2, 0, 0, 1);
+}
+
 .player {
     -fx-fill: #E53935;
+    -fx-effect: dropshadow(three-pass-box, black, 3, 0, 0, 2);
+}
+
+.playerLeft {
+    -fx-fill: #E53935;
+    -fx-effect: dropshadow(three-pass-box, black, 3, 0, 0, 2);
+}
+
+.playerRight {
+    -fx-fill: #3b35e5;
+    -fx-effect: dropshadow(three-pass-box, black, 3, 0, 0, 2);
 }
 
 .puckSpawner {

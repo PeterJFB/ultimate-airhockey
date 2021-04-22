@@ -3,7 +3,7 @@ package airhockey.environment;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 
-class PuckSpawner implements diskObject {
+class PuckSpawner implements DiskObject {
 
     // Position
     private final float radius = 18;
@@ -19,7 +19,6 @@ class PuckSpawner implements diskObject {
     
     // Other
     private final Rink rink;
-// TODO: Refactor to use countdown?
     public PuckSpawner(Rink rink, int spawnTime) {
         this.rink = rink;
         this.x = ranRange(spawnMargin, rink.getWidth() - spawnMargin);
@@ -51,7 +50,7 @@ class PuckSpawner implements diskObject {
 
     // Logic
 
-    private boolean isCollidingWith(diskObject object) {
+    private boolean isCollidingWith(DiskObject object) {
         float dx = object.getX() - getX();
         float dy = object.getY() - getY();
 

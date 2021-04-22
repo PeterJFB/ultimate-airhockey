@@ -7,6 +7,9 @@ import java.util.*;
 // Potentially change name to environment
 public class Rink {
 
+    // TODO: go over naming schemes
+    // TODO: Give error when loading fails
+
     // Dimensions
     private int width;
     private int height;
@@ -92,7 +95,7 @@ public class Rink {
             }
             else
             if (goalRight.isGoal(puck)) {
-                scoreBoard.addScore(Side.RIGHT, 1);
+                scoreBoard.addScore(Side.LEFT, 1);
                 puck.resetTo(playerRight);
 
                 if (pucks.size() > 1) {

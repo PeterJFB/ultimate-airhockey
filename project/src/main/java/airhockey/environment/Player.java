@@ -2,7 +2,7 @@ package airhockey.environment;
 
 import javafx.scene.shape.Circle;
 
-class Player extends PlayerControls implements diskObject {
+class Player extends PlayerControls implements DiskObject {
 
     // Position
     private float x;
@@ -276,7 +276,7 @@ class Player extends PlayerControls implements diskObject {
         playerCircle.setRadius(radius);
         playerCircle.setCenterX(x);
         playerCircle.setCenterY(y);
-        playerCircle.getStyleClass().add("player");
+        playerCircle.getStyleClass().add(getSide() == Side.LEFT ? "playerLeft" : "playerRight");
 
         return playerCircle;
     }

@@ -1,6 +1,6 @@
 package airhockey.environment;
 
-interface diskObject {
+interface DiskObject {
     float getX();
     float getY();
 
