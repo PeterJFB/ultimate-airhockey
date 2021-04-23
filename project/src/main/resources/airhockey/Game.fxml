@@ -15,7 +15,6 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
 <VBox alignment="CENTER" onKeyPressed="#handleKeyPress" onKeyReleased="#handleKeyRelease" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: salmon;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="airhockey.GameController">
    <children>
       <GridPane alignment="CENTER" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
@@ -60,7 +59,7 @@
                   <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
                </GridPane.margin>
             </Text>
-            <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #B3E5FC; -fx-background-color: white; -fx-border-insets: -20; -fx-border-width: 20; -fx-border-color: #616161; -fx-border-radius: 20;" stylesheets="@rink.css" GridPane.rowIndex="1">
+            <Pane cache="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #B3E5FC; -fx-background-color: white; -fx-border-insets: -20; -fx-border-width: 20; -fx-border-color: #616161; -fx-border-radius: 20;" stylesheets="@rink.css" GridPane.rowIndex="1">
                <children>
                   <Circle blendMode="SRC_ATOP" fill="#ffffff00" layoutX="185.0" layoutY="100.0" opacity="0.5" radius="71.0" stroke="RED" strokeType="INSIDE" strokeWidth="4.0" />
                   <Circle blendMode="SRC_ATOP" fill="#ffffff00" layoutX="185.0" layoutY="500.0" opacity="0.5" radius="71.0" stroke="RED" strokeType="INSIDE" strokeWidth="4.0" />
@@ -71,17 +70,17 @@
                   <Line endX="47.0" endY="314.0" layoutX="600.0" layoutY="293.0" opacity="0.5" startX="47.0" startY="-300.0" stroke="RED" strokeWidth="4.0" />
                </children>
             </Pane>
-            <Pane fx:id="rinkPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #B3E5FC; -fx-background-color: none; -fx-border-insets: -20; -fx-border-width: 20; -fx-border-color: #616161; -fx-border-radius: 20;" stylesheets="@rink.css" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <Pane fx:id="rinkPane" cache="true" cacheHint="SPEED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #B3E5FC; -fx-background-color: none; -fx-border-insets: -20; -fx-border-width: 20; -fx-border-color: #616161; -fx-border-radius: 20;" stylesheets="@rink.css" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <GridPane.margin>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </GridPane.margin>
             </Pane>
-            <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-border-insets: -20; -fx-border-width: 20; -fx-border-color: #616161; -fx-border-radius: 20;" stylesheets="@rink.css" GridPane.rowIndex="1">
+            <Pane cache="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-border-insets: -20; -fx-border-width: 20; -fx-border-color: #616161; -fx-border-radius: 20;" stylesheets="@rink.css" GridPane.rowIndex="1">
                <effect>
                   <DropShadow />
                </effect>
             </Pane>
-            <Text fx:id="winnerText" fill="#ffcf00" stroke="#c37e00" strokeType="OUTSIDE" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <Text fx:id="winnerText" cache="true" cacheHint="SPEED" fill="#ffcf00" stroke="#c37e00" strokeType="OUTSIDE" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <font>
                   <Font name="System Bold" size="50.0" />
                </font>
@@ -93,6 +92,22 @@
                   </DropShadow>
                </effect>
             </Text>
+            <Text fx:id="errorText" blendMode="SRC_ATOP" cache="true" cacheHint="SPEED" fill="RED" stroke="WHITE" strokeType="OUTSIDE" strokeWidth="3.0" textAlignment="CENTER" GridPane.rowIndex="1">
+               <font>
+                  <Font size="23.0" />
+               </font>
+            </Text>
+            <Button fx:id="closeErrorButton" mnemonicParsing="false" onAction="#closeError" styleClass="fileButton" stylesheets="@rink.css" text="Close" visible="false" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets top="100.0" />
+               </GridPane.margin>
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <padding>
+                  <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
+               </padding>
+            </Button>
             <HBox alignment="CENTER" GridPane.rowIndex="2">
                <children>
                   <Button fx:id="ResetButton" mnemonicParsing="false" onAction="#restartGame" stylesheets="@rink.css" text="Reset">
@@ -146,7 +161,7 @@
                   <Font name="System Bold" size="27.0" />
                </font>
             </Text>
-            <GridPane minHeight="-Infinity" minWidth="-Infinity">
+            <GridPane cache="true" minHeight="-Infinity" minWidth="-Infinity">
               <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="40.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="40.0" />
@@ -165,7 +180,7 @@
                 <RowConstraints minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Pane prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.rowSpan="2" GridPane.valignment="CENTER">
+                  <Pane cache="true" prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.rowSpan="2" GridPane.valignment="CENTER">
                      <children>
                         <Text fill="WHITE" layoutX="11.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="keyText" text="D">
                            <font>
@@ -177,7 +192,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Pane>
-                  <Pane prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="2">
+                  <Pane cache="true" prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="2">
                      <children>
                         <Text fill="WHITE" layoutX="9.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="keyText" text="W">
                            <font>
@@ -189,7 +204,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Pane>
-                  <Pane prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.rowSpan="2">
+                  <Pane cache="true" prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.rowSpan="2">
                      <children>
                         <Text fill="WHITE" layoutX="13.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="keyText" text="S">
                            <font>
@@ -201,7 +216,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Pane>
-                  <Pane prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="5" GridPane.rowIndex="1" GridPane.rowSpan="2">
+                  <Pane cache="true" prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="5" GridPane.rowIndex="1" GridPane.rowSpan="2">
                      <children>
                         <Text fill="WHITE" layoutX="15.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="keyText" text="I">
                            <font>
@@ -213,7 +228,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Pane>
-                  <Pane prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="4" GridPane.rowIndex="2" GridPane.rowSpan="2">
+                  <Pane cache="true" prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="4" GridPane.rowIndex="2" GridPane.rowSpan="2">
                      <children>
                         <Text fill="WHITE" layoutX="14.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="keyText" text="J">
                            <font>
@@ -225,7 +240,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Pane>
-                  <Pane prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="5" GridPane.rowIndex="3" GridPane.rowSpan="2">
+                  <Pane cache="true" prefHeight="210.0" prefWidth="149.0" styleClass="key" stylesheets="@rink.css" GridPane.columnIndex="5" GridPane.rowIndex="3" GridPane.rowSpan="2">
                      <children>
                         <Text fill="WHITE" layoutX="12.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="keyText" text="K">
                            <font>

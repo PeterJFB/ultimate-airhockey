@@ -11,12 +11,12 @@ import java.io.PrintWriter;
 
 //use of json serializer https://piazza.com/class/kjjy01odz6mmq?cid=954
 /*
- * I know we are encouraged to not use existing libraries where you do not need to manually serialize/deserialize verbatim.
- * But given the size of the project, I decided it was most realistic to represent the save file in a standardized format, and
- * since jackson was approved on piazza i choose JSON. I am still required to write my own serialization/deserialization functions, as i have done here.
- * */
+ * DEPRECATED: This class has been replaced by SaveHandler.
+ * Though the experience from using a json serializer was nice, I ultimately decided to do more of the serialization
+ * manually, as requested from multiple peers.
+ */
 
-public class SaveHandlerButBetter implements SaveController<Rink> {
+public class SaveHandlerUsingJSON implements SaveController<Rink> {
 
     @Override
     public void save(String path, Rink rink) throws IOException {

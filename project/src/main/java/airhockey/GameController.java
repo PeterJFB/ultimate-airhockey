@@ -13,6 +13,7 @@ import javafx.stage.FileChooser;
 import airhockey.lib.SaveController;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -41,6 +42,10 @@ public class GameController {
     @FXML
     private Text countDownText;
     @FXML
+    private Text errorText;
+    @FXML
+    private Button closeErrorButton;
+    @FXML
     private Button startAndPauseButton;
 
     private Rink rink;
@@ -60,11 +65,11 @@ public class GameController {
 
     public void drawGame() {
         /*
-        * The game uses no canvas, even though it would most likely be more optimized as game graphics. This was
-        * intentionally avoided since I already have experience with its equivalent library in javascript, and I wanted
-        * to explore the different elements in javaFX. It also reduces numbers of lines in java (which i think i have
-        * enough of already:) ), since i can use CSS to style them instead.
-        * */
+         * The game uses no canvas, even though it would most likely be more optimized as game graphics. This was
+         * intentionally avoided since I already have experience with its equivalent library in javascript, and I wanted
+         * to explore the different elements in javaFX. It also reduces numbers of lines in java (which i think i have
+         * enough of already:) ), since i can use CSS to style them instead.
+         * */
 
         rinkPane.getChildren().clear();
 
@@ -121,6 +126,7 @@ public class GameController {
             // Other
             case ENTER -> playGame();
             case P -> rink.spawnNewPuck();
+            case E -> alertError("Attempted to load from file but an error occurred");
         }
 
     }
@@ -155,6 +161,7 @@ public class GameController {
                     boolean isOver = rink.tick();
                     // Drawing
                     drawGame();
+                    // End game if countDown is finished.
                     if (isOver) {
                         winnerText.setText(rink.getWinnerText());
                         stopGame();
@@ -180,7 +187,8 @@ public class GameController {
 
     public void stopGame() {
         // Happens only when game is over
-        task.cancel();
+        if (task != null)
+            task.cancel();
         // Update state of buttons
         startAndPauseButton.setVisible(false);
     }
@@ -201,7 +209,7 @@ public class GameController {
 
     // File interaction
 
-    public void saveGame() throws Exception {
+    public void saveGame() {
         pauseGame();
         try {
 
@@ -210,33 +218,49 @@ public class GameController {
             // https://edencoding.com/stage-controller/
             fileChooser.setInitialFileName("save.pson");
             File file = fileChooser.showSaveDialog(startAndPauseButton.getScene().getWindow()); // Nasty workaround
+            // Save only if a path was specified
             if (file != null)
                 saveHandler.save(file.getAbsolutePath(), rink);
-
         } catch (Exception e) { // Maybe move this inside save
             System.err.println("Attempted to write to file but an error occurred.");
-            throw e;
+            alertError("Attempted to write to file but an error occurred:\n%s".formatted(e.getMessage()));
+            e.printStackTrace();
         }
     }
 
-    public void loadGame() throws Exception {
+    public void loadGame() {
         pauseGame();
         try {
             // https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
             fileChooser.setTitle("Open saved game");
             // https://edencoding.com/stage-controller/
             File file = fileChooser.showOpenDialog(startAndPauseButton.getScene().getWindow());
+            // Load only if a path was specified
             if (file != null) {
-                rink = saveHandler.load(file.getAbsolutePath());
-                if (rink.isGameFinished()) {
-                    winnerText.setText(rink.getWinnerText());
-                    stopGame();
+                Rink newRink = saveHandler.load(file.getAbsolutePath());
+                if (newRink != null) {
+                    rink = newRink;
+                    if (rink.isGameFinished()) {
+                        winnerText.setText(rink.getWinnerText());
+                        stopGame();
+                    }
                 }
             }
             drawGame();
         } catch (Exception e) {
-            System.err.println("Attempted to load from file but an error occurred.");
-            throw e;
-        }
+             System.err.println("Attempted to load from file but an error occurred.");
+             alertError("Attempted to load from file but an error occurred:\n%s".formatted(e.getMessage()));
+             e.printStackTrace();
+         }
+    }
+
+    private void alertError(String error) {
+        errorText.setText(error);
+        closeErrorButton.setVisible(true);
+    }
+
+    public void closeError() {
+        errorText.setText("");
+        closeErrorButton.setVisible(false);
     }
 }
