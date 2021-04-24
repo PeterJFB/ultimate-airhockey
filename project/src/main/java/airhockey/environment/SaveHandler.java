@@ -2,15 +2,12 @@ package airhockey.environment;
 
 import airhockey.lib.SaveController;
 
-import org.json.JSONObject;
-
 
 import java.io.*;
 import java.security.InvalidParameterException;
 import java.util.*;
 
 
-//TODO: Write tests?
 public class SaveHandler implements SaveController<Rink> {
 
     // Description

@@ -2,6 +2,9 @@ package airhockey.environment;
 
 import java.util.HashMap;
 
+/*
+* Delegate used by rink to keep track of scores and decide winner
+* */
 class TwoPlayerScoreBoard {
 
     private final HashMap<Side, Integer> scores;
@@ -13,6 +16,8 @@ class TwoPlayerScoreBoard {
     }
 
     public void addScore(Side side, int points) {
+        if (side == null)
+            throw new IllegalArgumentException("side cannot be null.");
         if (points < 0)
             throw new IllegalArgumentException("points cannot be negative: " + points);
 
@@ -21,6 +26,8 @@ class TwoPlayerScoreBoard {
     }
 
     public int getScoreOf(Side side) {
+        if (side == null)
+            throw new IllegalArgumentException("side cannot be null.");
         return scores.get(side);
     }
 

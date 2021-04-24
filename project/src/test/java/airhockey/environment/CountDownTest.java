@@ -8,11 +8,11 @@ public class CountDownTest {
     @Test
     @DisplayName("Invalid initialization should give error")
     public void checkInitialization() {
-        Assertions.assertThrows(IllegalArgumentException.class, ()-> {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CountDown cd = new CountDown(-1, 1);
         });
 
-        Assertions.assertThrows(IllegalArgumentException.class, ()-> {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
             CountDown cd = new CountDown(100, 0);
         });
     }
@@ -41,5 +41,19 @@ public class CountDownTest {
         cd.tick();
         Assertions.assertEquals(stoppedTime, cd.getTime(), "The timer should not have change since it is already finished");
 
+    }
+
+    @Test
+    @DisplayName("Countdown cannot be set to an invalid time")
+    public void testSetCountDown() {
+        CountDown cd = new CountDown(10, 0.5f);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+           cd.setTime(-0.001f);
+        }, "A negative time should throw error");
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            cd.setTime(10.001f);
+        }, "A time larger than initial time should throw error");
     }
 }

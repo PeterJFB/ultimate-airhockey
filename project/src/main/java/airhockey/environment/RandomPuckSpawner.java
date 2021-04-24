@@ -3,28 +3,41 @@ package airhockey.environment;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 
-class PuckSpawner implements DiskObject {
+/*
+* RandomPuckSpawner is a delegate used by Rink, and is created whenever the Rink wants to spawn Puck at a random position.
+* */
+
+class RandomPuckSpawner implements DiskObject {
 
     // Position
-    private final float radius = 18;
+    private final float RADIUS = 18;
     private final float x;
     private final float y;
 
     // Logic
     private final float initialSpawnTime; // s
-    private final float spawnMargin = radius * 2f;
+    private final float SPAWN_MARGIN = RADIUS * 2f;
     private boolean finished = false;
 
     private CountDown countDown;
     
     // Other
     private final Rink rink;
-    public PuckSpawner(Rink rink, int spawnTime) {
+    private Arc spawnArc;
+
+    public RandomPuckSpawner(Rink rink, int spawnTime) {
+        if (rink == null)
+            throw new IllegalArgumentException("rink cannot be null.");
         this.rink = rink;
-        this.x = ranRange(spawnMargin, rink.getWidth() - spawnMargin);
-        this.y = ranRange(spawnMargin, rink.getHeight() - spawnMargin);
+
+        this.x = ranRange(SPAWN_MARGIN, rink.getWidth() - SPAWN_MARGIN);
+        this.y = ranRange(SPAWN_MARGIN, rink.getHeight() - SPAWN_MARGIN);
+
+        // We do no exception check, as it is done in CountDown
         initialSpawnTime = spawnTime;
         countDown = new CountDown((int) initialSpawnTime, rink.getTickInterval() / 1000f);
+
+        createSpawnArc();
     }
 
     // Getters and Setters
@@ -41,7 +54,7 @@ class PuckSpawner implements DiskObject {
 
     @Override
     public float getRadius() {
-        return radius;
+        return RADIUS;
     }
 
     public boolean isFinished() {
@@ -51,6 +64,9 @@ class PuckSpawner implements DiskObject {
     // Logic
 
     private boolean isCollidingWith(DiskObject object) {
+        if (object == null)
+            throw new IllegalArgumentException("object cannot be null.");
+
         float dx = object.getX() - getX();
         float dy = object.getY() - getY();
 
@@ -65,6 +81,7 @@ class PuckSpawner implements DiskObject {
 
     public void tick() {
     	countDown.tick();
+        // Attempt to spawn if it is finished
         if (countDown.isFinished()) {
 
             // Check for collision
@@ -76,7 +93,7 @@ class PuckSpawner implements DiskObject {
             if (isCollidingWith(rink.playerLeft) || isCollidingWith(rink.playerRight)) {
                 return;
             }
-            Puck newPuck = new Puck(x, y, radius, rink);
+            Puck newPuck = new Puck(x, y, RADIUS, rink);
             newPuck.resetVel();
             rink.pucks.add(newPuck);
             finished = true;
@@ -85,17 +102,19 @@ class PuckSpawner implements DiskObject {
 
     // Drawing
 
-    public Arc draw() {
-        Arc spawnArc = new Arc();
-        spawnArc.setCenterX(getX());
-        spawnArc.setCenterY(getY());
+    private void createSpawnArc() {
+        spawnArc = new Arc();
         spawnArc.setRadiusX(getRadius());
         spawnArc.setRadiusY(getRadius());
+        spawnArc.setCenterX(getX());
+        spawnArc.setCenterY(getY());
         spawnArc.setStartAngle(90f);
         spawnArc.setType(ArcType.ROUND);
-        spawnArc.setLength((initialSpawnTime - countDown.getTime()) / initialSpawnTime * 360f);
         spawnArc.getStyleClass().add("puckSpawner");
+    }
 
+    public Arc draw() {
+        spawnArc.setLength((countDown.getInitialTime() - countDown.getTime()) / countDown.getInitialTime() * 360f);
         return spawnArc;
     }
 }

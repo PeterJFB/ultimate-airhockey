@@ -1,15 +1,32 @@
 package airhockey.environment;
 
-abstract class PlayerControls {
+class PlayerControls {
     /*
-     * The class converts discrete events to continuous values which Player-class can rely on.
+     * The class converts discrete events to continuous values which the Player-class can rely on.
      * No tests are written since other classes was deemed more critical.
      * */
 
-    boolean pressingUp = false;
-    boolean pressingDown = false;
-    boolean pressingLeft = false;
-    boolean pressingRight = false;
+    private boolean pressingUp = false;
+    private boolean pressingDown = false;
+    private boolean pressingLeft = false;
+    private boolean pressingRight = false;
+
+
+    boolean isPressingUp() {
+        return pressingUp;
+    }
+
+    boolean isPressingDown() {
+        return pressingDown;
+    }
+
+    boolean isPressingLeft() {
+        return pressingLeft;
+    }
+
+    boolean isPressingRight() {
+        return pressingRight;
+    }
 
     public void setPressingUp(boolean pressingUp) {
         this.pressingUp = pressingUp;
@@ -28,11 +45,19 @@ abstract class PlayerControls {
     }
 
     public void setPlayerPressing(Direction dir, boolean active) {
+        if (dir == null) {
+            throw new IllegalArgumentException("dir cannot be null.");
+        }
         switch (dir) {
             case UP -> setPressingUp(active);
             case DOWN -> setPressingDown(active);
             case LEFT -> setPressingLeft(active);
             case RIGHT -> setPressingRight(active);
         }
+    }
+
+    public static void main(String[] args) {
+        PlayerControls pc = new PlayerControls();
+        pc.setPlayerPressing(null, true);
     }
 }

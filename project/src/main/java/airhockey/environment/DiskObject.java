@@ -7,7 +7,7 @@ interface DiskObject {
     float getRadius();
 
     /*
-    * Circles doesn't necessarily have a velocity, and can there choose to implement it.
+    * Circles doesn't necessarily have a velocity, and can therefore choose to implement it.
     * */
     default float getVx() {
         return 0;

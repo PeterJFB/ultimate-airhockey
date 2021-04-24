@@ -73,7 +73,7 @@ public class PuckTest {
     }
 
     private float getEnergy(Puck puck) {
-        return 0.5f * puck.getMass() * (puck.getVx() * puck.getVx() + puck.getVy() * puck.getVy());
+        return 0.5f * puck.getMASS() * (puck.getVx() * puck.getVx() + puck.getVy() * puck.getVy());
     }
 
     @Test

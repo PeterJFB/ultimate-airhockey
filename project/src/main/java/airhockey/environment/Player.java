@@ -1,5 +1,6 @@
 package airhockey.environment;
 
+import javafx.scene.CacheHint;
 import javafx.scene.shape.Circle;
 
 class Player extends PlayerControls implements DiskObject {
@@ -16,16 +17,17 @@ class Player extends PlayerControls implements DiskObject {
     // Movement
     private float vx = 0;
     private float vy = 0;
-    private final float VELOCITY = 400;
+    private final float DEFAULT_VELOCITY = 400;
     private final float dt;
 
     // Physics
-    public final float mass = 20;
+    private final float MASS = 20;
 
     // Other
     private final Side side;
     private String name;
     private final Rink rink;
+    private Circle playerCircle;
 
     public Player(float x, float y,
                   float vx, float vy,
@@ -34,7 +36,11 @@ class Player extends PlayerControls implements DiskObject {
                   float radius,
                   Side side, String name, Rink rink) {
         super();
+        if (rink == null) {
+            throw new IllegalArgumentException("rink cannot be null.");
+        }
         this.rink = rink;
+
         setRadius(radius);
 
         setX(x);
@@ -50,8 +56,13 @@ class Player extends PlayerControls implements DiskObject {
         setReachY(reachY);
 
         dt = (float) this.rink.getTickInterval() / 1000;
+        if (side == null) {
+            throw new IllegalArgumentException("side cannot be null.");
+        }
         this.side = side;
-        this.name = name;
+        setName(name != null ? name : (side == Side.LEFT ? "Player 1" : "Player 2"));
+
+        createPlayerCircle();
     }
 
     public Player(float x, Rink rink, float reachX, float radius, Side side, String name) {
@@ -79,7 +90,7 @@ class Player extends PlayerControls implements DiskObject {
 
     public void setX(float x) {
         if (0 + radius > x || x > rink.getWidth() - radius)
-            throw new IllegalArgumentException("X must be within bounds of rink (0 - " + rink.getWidth() + "): " + x);
+            throw new IllegalArgumentException("X must be within bounds of rink (0 - %s): %s".formatted(rink.getWidth(), x));
         this.x = x;
     }
 
@@ -89,7 +100,7 @@ class Player extends PlayerControls implements DiskObject {
 
     public void setY(float y) {
         if (0 + radius > y || y > rink.getHeight() - radius)
-            throw new IllegalArgumentException("Y must be within bounds of rink (0 - " + rink.getHeight() + "): " + y);
+            throw new IllegalArgumentException("Y must be within bounds of rink (0 - %s): %s".formatted(rink.getHeight(), y));
         this.y = y;
     }
 
@@ -117,9 +128,9 @@ class Player extends PlayerControls implements DiskObject {
         return originX;
     }
 
-    public void validateOriginX(float originX) {
+    private void validateOriginX(float originX) {
         if (0 + radius > originX || originX > rink.getWidth() - radius) {
-            throw new IllegalArgumentException("OriginX must be within bounds of rink (0 - " + rink.getWidth() + "): " + originX);
+            throw new IllegalArgumentException("OriginX must be within bounds of rink (0 - %s): %s".formatted(rink.getWidth(), originX));
         }
     }
 
@@ -156,17 +167,13 @@ class Player extends PlayerControls implements DiskObject {
     }
 
     public void setName(String name) {
+        if (name == null || name.isEmpty())
+            throw new IllegalArgumentException("name cannot be null or empty.");
         this.name = name;
     }
 
-    public float getMass() {
-        return mass;
-    }
-
-    private void validateMass(float mass) {
-        if (mass <= 0) {
-            throw new IllegalArgumentException("Mass has to be positive: " + mass);
-        }
+    public float getMASS() {
+        return MASS;
     }
 
     public String getId() {
@@ -188,31 +195,31 @@ class Player extends PlayerControls implements DiskObject {
 
         // Update velocity based on input
 
-        if (pressingUp) {
+        if (isPressingUp()) {
             moveUp();
         }
-        if (pressingDown) {
+        if (isPressingDown()) {
             moveDown();
         }
-        if (pressingLeft && side == Side.RIGHT) {
+        if (isPressingLeft() && side == Side.RIGHT) {
             moveLeft();
         }
-        if (pressingRight && side == Side.LEFT) {
+        if (isPressingRight() && side == Side.LEFT) {
             moveRight();
         }
 
         // Update position based on which direction is pressed 
 
         // Vertical
-        if (pressingUp || pressingDown) {
+        if (isPressingUp() || isPressingDown()) {
             y += getVy() * dt;
         } else {
             // If no vertical input, move player towards origin
             float centerDirX = getOriginX() - getX();
             float centerDirY = getOriginY() - getY();
 
-            if (Math.abs(centerDirX) > VELOCITY * dt || Math.abs(centerDirY) > VELOCITY * dt) {
-                float scale = (float) (VELOCITY / Math.sqrt(centerDirX * centerDirX + centerDirY * centerDirY));
+            if (Math.abs(centerDirX) > DEFAULT_VELOCITY * dt || Math.abs(centerDirY) > DEFAULT_VELOCITY * dt) {
+                float scale = (float) (DEFAULT_VELOCITY / Math.sqrt(centerDirX * centerDirX + centerDirY * centerDirY));
                 vy = centerDirY * scale;
                 y += getVy() * dt;
             } else {
@@ -226,15 +233,15 @@ class Player extends PlayerControls implements DiskObject {
         }
 
         // Horizontal
-        if (pressingLeft && side == Side.RIGHT || pressingRight && side == Side.LEFT) {
+        if (isPressingLeft() && side == Side.RIGHT || isPressingRight() && side == Side.LEFT) {
             x += getVx() * dt;
         } else {
             // If no horizontal input, move player towards origin
             float centerDirX = getOriginX() - getX();
             float centerDirY = getOriginY() - getY();
 
-            if (Math.abs(centerDirX) > VELOCITY * dt || Math.abs(centerDirY) > VELOCITY * dt) {
-                float scale = (float) (VELOCITY / Math.sqrt(centerDirX * centerDirX + centerDirY * centerDirY));
+            if (Math.abs(centerDirX) > DEFAULT_VELOCITY * dt || Math.abs(centerDirY) > DEFAULT_VELOCITY * dt) {
+                float scale = (float) (DEFAULT_VELOCITY / Math.sqrt(centerDirX * centerDirX + centerDirY * centerDirY));
                 vx = centerDirX * scale;
                 x += getVx() * dt;
             } else {
@@ -249,20 +256,20 @@ class Player extends PlayerControls implements DiskObject {
     }
 
     private void moveUp() {
-        vy = -VELOCITY;
+        vy = -DEFAULT_VELOCITY;
     }
 
     private void moveDown() {
-        vy = VELOCITY;
+        vy = DEFAULT_VELOCITY;
     }
 
     // Horizontal velocity is based on how far the player is from origin
     private void moveLeft() {
-        vx = -VELOCITY * getVxDistanceMultiplier();
+        vx = -DEFAULT_VELOCITY * getVxDistanceMultiplier();
     }
 
     private void moveRight() {
-        vx = VELOCITY * getVxDistanceMultiplier();
+        vx = DEFAULT_VELOCITY * getVxDistanceMultiplier();
     }
 
     private float getVxDistanceMultiplier() {
@@ -271,12 +278,18 @@ class Player extends PlayerControls implements DiskObject {
 
     // Drawing
 
-    public Circle draw() {
-        Circle playerCircle = new Circle();
-        playerCircle.setRadius(radius);
-        playerCircle.setCenterX(x);
-        playerCircle.setCenterY(y);
+    private void createPlayerCircle() {
+        playerCircle = new Circle();
+        playerCircle.setRadius(getRadius());
         playerCircle.getStyleClass().add(getSide() == Side.LEFT ? "playerLeft" : "playerRight");
+        // https://stackoverflow.com/questions/18911186/how-do-setcache-and-cachehint-work-together-in-javafx
+        playerCircle.cacheProperty().set(true);
+        playerCircle.cacheHintProperty().set(CacheHint.SPEED);
+    }
+
+    public Circle draw() {
+        playerCircle.setCenterX(getX());
+        playerCircle.setCenterY(getY());
 
         return playerCircle;
     }

@@ -6,18 +6,26 @@ class Goal {
 
     // Dimensions
     private float size;
-    private final float width = 20;
+    private final float WIDTH = 20;
     private float centerY;
 
     // Other
     private final Side side;
     private final Rink rink;
+    private Rectangle goalRectangle;
 
     public Goal(Side side, float size, float centerY, Rink rink) {
+        if (rink == null) {
+            throw new IllegalArgumentException("rink cannot be null.");
+        }
         this.rink = rink;
+        if (side == null) {
+            throw new IllegalArgumentException("side cannot be null.");
+        }
         this.side = side;
         setSize(size);
         setCenterY(centerY);
+        createGoalRectangle();
     }
 
     // Getters and Setters
@@ -31,7 +39,7 @@ class Goal {
     }
 
     public float getWidth() {
-        return width;
+        return WIDTH;
     }
 
     public Side getSide() {
@@ -56,7 +64,9 @@ class Goal {
     }
 
     public boolean isGoal (Puck puck) {
-        // Check if puck is in same height as goal
+        if (puck == null)
+            return false;
+        // Check if puck is at same height as goal
         if ( !(getCenterY() - getSize()/2 <= puck.getY() && puck.getY() <= getCenterY() + getSize()/2) )
             return false;
         // Return if puck is in goal
@@ -68,8 +78,8 @@ class Goal {
 
     // Drawing
 
-    public Rectangle draw() {
-        Rectangle goalRectangle = new Rectangle();
+    public void createGoalRectangle() {
+        goalRectangle = new Rectangle();
         goalRectangle.setWidth(getWidth());
         goalRectangle.setHeight(getSize());
         switch (getSide()) {
@@ -77,7 +87,10 @@ class Goal {
             case RIGHT -> goalRectangle.setLayoutX(rink.getWidth()-getWidth()/2f);
         }
         goalRectangle.setLayoutY(getCenterY()-getSize()/2f);
+        goalRectangle.cacheProperty().set(true);
+    }
 
+    public Rectangle draw() {
         return goalRectangle;
     }
 }

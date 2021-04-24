@@ -4,24 +4,24 @@ import javafx.scene.Node;
 
 import java.util.*;
 
-// Potentially change name to environment
-public class Rink {
+/*
+* Rink can be interpreted as the games environment. It controls the flow and bounding box of the game.
+* */
 
-    // TODO: go over naming schemes
-    // TODO: Give error when loading fails
+public class Rink {
 
     // Dimensions
     private int width;
     private int height;
-    private final int minWidth = 100;
-    private final int minHeight = 100;
+    private final int MIN_WIDTH = 100;
+    private final int MIN_HEIGHT = 100;
 
     // Items in rink (Delegates)
     Player playerLeft;
     Player playerRight;
 
     List<Puck> pucks = new ArrayList<>();
-    PuckSpawner puckSpawner;
+    RandomPuckSpawner randomPuckSpawner;
 
     Goal goalLeft;
     Goal goalRight;
@@ -30,7 +30,8 @@ public class Rink {
     CountDown countDown;
 
     // Logic
-    private final int puckSpawnRate = 10; // n per minute
+    private final int PUCK_SPAWN_RATE = 10; // n per minute
+    private final int PUCK_SPAWN_TIME = 1; // s
     private final long tickInterval = 10; // ms per tick
 
     // Constructor for initializing game and loading files
@@ -87,29 +88,34 @@ public class Rink {
             // Update game status
             if (goalLeft.isGoal(puck)) {
                 scoreBoard.addScore(Side.RIGHT, 1);
-                puck.resetTo(playerLeft);
 
-                if (pucks.size() > 1) {
+                // Remove puck unless it is the last one
+                if (pucks.size() < 1) {
                     puckIterator.remove();
+                } else {
+                    puck.resetTo(playerLeft);
                 }
             }
             else
             if (goalRight.isGoal(puck)) {
                 scoreBoard.addScore(Side.LEFT, 1);
-                puck.resetTo(playerRight);
 
+                // Remove puck unless it is the last one
                 if (pucks.size() > 1) {
                     puckIterator.remove();
+                } else {
+                    puck.resetTo(playerRight);
                 }
             }
 
         }
 
-        // Spawn more pucks
-        if (puckSpawner != null) {
-            puckSpawner.tick();
-            if (puckSpawner.isFinished())
-                puckSpawner = null;
+        // Attempt to spawn more pucks unless it is already spawning one
+        if (randomPuckSpawner != null) {
+            randomPuckSpawner.tick();
+            // Remove RandomPuckSpawner if it is finished
+            if (randomPuckSpawner.isFinished())
+                randomPuckSpawner = null;
         } else if (shouldNewPuckSpawn()) {
             spawnNewPuck();
         }
@@ -117,7 +123,7 @@ public class Rink {
         // Update countdown
         countDown.tick();
 
-        return (countDown.isFinished());
+        return isGameFinished();
 
     }
 
@@ -127,8 +133,8 @@ public class Rink {
     }
 
     private void setWidth(int width) {
-        if (width < minWidth)
-            throw new IllegalArgumentException("Rink width can't be smaller than " + minWidth + ": " + width);
+        if (width < MIN_WIDTH)
+            throw new IllegalArgumentException("Rink width can't be smaller than %s: %s".formatted(MIN_WIDTH, width));
         this.width = width;
     }
 
@@ -137,8 +143,8 @@ public class Rink {
     }
 
     private void setHeight(int height) {
-        if (height < minHeight)
-            throw new IllegalArgumentException("Rink height can't be smaller than " + minHeight + ": " + height);
+        if (height < MIN_HEIGHT)
+            throw new IllegalArgumentException("Rink height can't be smaller than %s: %s".formatted(MIN_HEIGHT, height));
         this.height = height;
     }
 
@@ -148,10 +154,6 @@ public class Rink {
 
     public int getTimeInSeconds() {
         return countDown.getTimeInWholeSeconds();
-    }
-
-    TwoPlayerScoreBoard getScoreBoard() {
-        return scoreBoard;
     }
 
     public int getScoreOf(Side side) {
@@ -168,6 +170,9 @@ public class Rink {
     }
 
     public String getPlayerNameOf(Side side) {
+        if (side == null) {
+            throw new IllegalArgumentException("Side cannot be null");
+        }
         return switch (side) {
             case LEFT -> playerLeft.getName();
             case RIGHT -> playerRight.getName();
@@ -188,6 +193,8 @@ public class Rink {
     // Player movement
 
     public void setPlayerPressing(Side side, Direction dir, boolean active) {
+        if (side == null)
+            throw new IllegalArgumentException("side cannot be null");
         switch (side) {
             case LEFT -> playerLeft.setPlayerPressing(dir, active);
             case RIGHT -> playerRight.setPlayerPressing(dir, active);
@@ -197,19 +204,19 @@ public class Rink {
     // Puck spawning logic
 
     private boolean shouldNewPuckSpawn() {
-        return Math.random() < getTickInterval()/1000f * puckSpawnRate/60f;
+        return Math.random() < getTickInterval()/1000f * PUCK_SPAWN_RATE /60f;
     }
 
     public void spawnNewPuck() {
-        puckSpawner = new PuckSpawner(this, 1);
+        randomPuckSpawner = new RandomPuckSpawner(this, PUCK_SPAWN_TIME);
     }
 
     void clearPucks() {
         pucks.clear();
     }
 
-    public Node[] generateSnapshot() {
-        Node[] drawings = new Node[4 + pucks.size() + (puckSpawner != null ? 1 : 0)];
+    public Node[] generateSnapshotOfGame() {
+        Node[] drawings = new Node[4 + pucks.size() + (randomPuckSpawner != null ? 1 : 0)];
 
         drawings[0] = playerLeft.draw();
         drawings[1] = playerRight.draw();
@@ -220,8 +227,8 @@ public class Rink {
             drawings[4+i] = pucks.get(i).draw();
         }
 
-        if (puckSpawner != null)
-            drawings[drawings.length-1] = puckSpawner.draw();
+        if (randomPuckSpawner != null)
+            drawings[drawings.length-1] = randomPuckSpawner.draw();
 
         return drawings;
     }

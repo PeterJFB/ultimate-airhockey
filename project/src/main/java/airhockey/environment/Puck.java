@@ -1,5 +1,6 @@
 package airhockey.environment;
 
+import javafx.scene.CacheHint;
 import javafx.scene.shape.Circle;
 
 class Puck implements DiskObject {
@@ -15,15 +16,20 @@ class Puck implements DiskObject {
     private final float dt; // s
 
     // Physics
-    private final float mass = 10;
+    private final float MASS = 10;
     private final float SPAWN_VELOCITY = 10f; // px per s
+    private final float SPAWN_FACTOR = 11/50f;
 
     // Other
     private final Rink rink;
     private String lastCollidedWith = "";
     private String id;
+    private Circle puckCircle;
 
     public Puck(float x, float y, float vx, float vy, float radius, String id, Rink rink) {
+        if (rink == null) {
+            throw new IllegalArgumentException("rink cannot be null.");
+        }
         this.rink = rink;
 
         setRadius(radius);
@@ -33,8 +39,10 @@ class Puck implements DiskObject {
         setVx(vx);
         setVy(vy);
 
-        setId( id.isEmpty() ? String.valueOf(this.hashCode()) : id);
+        setId( id == null || id.isEmpty() ? String.valueOf(this.hashCode()) : id);
         dt = rink.getTickInterval() / 1000f;
+
+        createPuckCircle();
     }
 
     public Puck(float x, float y, float vx, float vy, float radius, Rink rink) {
@@ -113,8 +121,8 @@ class Puck implements DiskObject {
         return lastCollidedWith;
     }
 
-    public float getMass() {
-        return mass;
+    public float getMASS() {
+        return MASS;
     }
 
     public String getId() {
@@ -122,8 +130,8 @@ class Puck implements DiskObject {
     }
 
     public void setId(String id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Id of puck cannot be null.");
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Id of puck cannot be null or blank.");
         }
         this.id = id;
     }
@@ -131,6 +139,7 @@ class Puck implements DiskObject {
     // Logic
 
     public void updateWallCollision() {
+        // Inverts velocity if the puck is touching a wall
         if (getX() - getRadius() <= 0) {
             setVx(Math.abs(getVx()));
         } else if (rink.getWidth() <= getX() + getRadius()) {
@@ -144,6 +153,10 @@ class Puck implements DiskObject {
     }
 
     private float getDistanceSquared(DiskObject object) {
+        if (object == null) {
+            throw new IllegalArgumentException("object cannot be null.");
+        }
+
         float dx = object.getX() - getX();
         float dy = object.getY() - getY();
 
@@ -151,10 +164,14 @@ class Puck implements DiskObject {
     }
 
     public boolean isCollidingWith(Player player) {
+        if (player == null)
+            return false;
+
         float distanceSquared = getDistanceSquared(player);
         float dr = player.getRadius() + getRadius();
 
         if (distanceSquared <= dr * dr) {
+            // The collision is only performed if they have not just collided with each other
             return !getLastCollidedWith().equals(player.getId());
         }
 
@@ -166,10 +183,14 @@ class Puck implements DiskObject {
     }
 
     public boolean isCollidingWith(Puck puck) {
+        if (puck == null)
+            return false;
+
         float distanceSquared = getDistanceSquared(puck);
         float dr = puck.getRadius() + getRadius();
 
         if (distanceSquared <= dr * dr) {
+            // The collision is only performed if they have not just collided with each other
             return !getLastCollidedWith().equals(puck.getId()) || !puck.getLastCollidedWith().equals(getId());
         }
 
@@ -186,6 +207,8 @@ class Puck implements DiskObject {
     }
 
     public void performCollisionWith(Player player) {
+        if (player == null)
+            return;
 
         // Get direction of collision
         float dirX = player.getX() - getX();
@@ -206,8 +229,8 @@ class Puck implements DiskObject {
         float tanVy = getVy() - collVy;
 
         // New velocity from elastic collision
-        float newCollVx = ((getMass() - player.getMass()) * collVx + (2 * player.getMass() * playerCollVx)) / (getMass() + player.getMass());
-        float newCollVy = ((getMass() - player.getMass()) * collVy + (2 * player.getMass() * playerCollVy)) / (getMass() + player.getMass());
+        float newCollVx = ((getMASS() - player.getMASS()) * collVx + (2 * player.getMASS() * playerCollVx)) / (getMASS() + player.getMASS());
+        float newCollVy = ((getMASS() - player.getMASS()) * collVy + (2 * player.getMASS() * playerCollVy)) / (getMASS() + player.getMASS());
 
         // Add new velocity to puck
         setVx(newCollVx + tanVx);
@@ -220,6 +243,8 @@ class Puck implements DiskObject {
     }
 
     public void performCollisionWith(Puck puck) {
+        if (puck == null)
+            return;
 
         // Get direction of collision
         float dirX = puck.getX() - getX();
@@ -243,11 +268,11 @@ class Puck implements DiskObject {
         float puckTanVy = puck.getVy() - puckCollVy;
 
         // New velocity from elastic collision
-        float newCollVx = ((getMass() - puck.getMass()) * collVx + (2 * puck.getMass() * puckCollVx)) / (getMass() + puck.getMass());
-        float newCollVy = ((getMass() - puck.getMass()) * collVy + (2 * puck.getMass() * puckCollVy)) / (getMass() + puck.getMass());
+        float newCollVx = ((getMASS() - puck.getMASS()) * collVx + (2 * puck.getMASS() * puckCollVx)) / (getMASS() + puck.getMASS());
+        float newCollVy = ((getMASS() - puck.getMASS()) * collVy + (2 * puck.getMASS() * puckCollVy)) / (getMASS() + puck.getMASS());
 
-        float puckNewCollVx = ((puck.getMass() - getMass()) * puckCollVx + (2 * getMass() * collVx)) / (getMass() + puck.getMass());
-        float puckNewCollVy = ((puck.getMass() - getMass()) * puckCollVy + (2 * getMass() * collVy)) / (getMass() + puck.getMass());
+        float puckNewCollVx = ((puck.getMASS() - getMASS()) * puckCollVx + (2 * getMASS() * collVx)) / (getMASS() + puck.getMASS());
+        float puckNewCollVy = ((puck.getMASS() - getMASS()) * puckCollVy + (2 * getMASS() * collVy)) / (getMASS() + puck.getMASS());
 
 
         // Add new velocity to puck
@@ -276,30 +301,41 @@ class Puck implements DiskObject {
     }
 
     void resetVel() {
-        setVx((float) Math.sin(Math.random() * 2f * Math.PI) * SPAWN_VELOCITY);
+        // Spawn-velocity is set in a random direction to ensure variety.
+        setVx((float) Math.cos(Math.random() * 2f * Math.PI) * SPAWN_VELOCITY);
         setVy((float) Math.sin(Math.random() * 2f * Math.PI) * SPAWN_VELOCITY);
     }
 
     public void resetTo(Player player) {
+        if (player == null)
+            throw new IllegalArgumentException("player cannot be null.");
+
         resetVel();
 
         setY(rink.getHeight() / 2f);
         switch (player.getSide()) {
-            case LEFT -> setX(11/50f * rink.getWidth());
-            case RIGHT -> setX(rink.getWidth() - 11/50f * rink.getWidth());
+            case LEFT -> setX(SPAWN_FACTOR * rink.getWidth());
+            case RIGHT -> setX(rink.getWidth() - SPAWN_FACTOR * rink.getWidth());
         }
 
+        // Ensure that resetting position does not lead to instant collision with player
         setLastCollidedWith(player.getId());
     }
 
     // Drawing
 
-    public Circle draw() {
-        Circle puckCircle = new Circle();
+    private void createPuckCircle() {
+        puckCircle = new Circle();
         puckCircle.setRadius(getRadius());
+        puckCircle.getStyleClass().add("puck");
+        // https://stackoverflow.com/questions/18911186/how-do-setcache-and-cachehint-work-together-in-javafx
+        puckCircle.cacheProperty().set(true);
+        puckCircle.cacheHintProperty().set(CacheHint.SPEED);
+    }
+
+    public Circle draw() {
         puckCircle.setCenterX(getX());
         puckCircle.setCenterY(getY());
-        puckCircle.getStyleClass().add("puck");
 
         return puckCircle;
     }

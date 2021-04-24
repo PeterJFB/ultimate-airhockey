@@ -1,16 +1,19 @@
 package airhockey.environment;
 
+/*
+* Delegate used by Rink (as a countdown for the game) and PuckSpawner (as a countdown to spawn puck)
+* */
 class CountDown {
-    private final int startTime;
+    private final int initialTime;
     private float time;
     private final float timeIntervalInSeconds;
 
-    public CountDown(int startTime, float timeIntervalInSeconds) {
-        if (startTime <= 0) {
-            throw new IllegalArgumentException("startTime must be a non-negative integer: " + startTime);
+    public CountDown(int initialTime, float timeIntervalInSeconds) {
+        if (initialTime <= 0) {
+            throw new IllegalArgumentException("initialTime must be a positive integer: " + initialTime);
         }
-        this.startTime = startTime;
-        this.time = startTime;
+        this.initialTime = initialTime;
+        this.time = initialTime;
 
         if (timeIntervalInSeconds <= 0) {
             throw new IllegalArgumentException("timeIntervalInSeconds must be a positive number: " + timeIntervalInSeconds);
@@ -28,7 +31,13 @@ class CountDown {
         return time;
     }
 
+    public int getInitialTime() {
+        return initialTime;
+    }
+
     public void setTime(float time) {
+        if (time > initialTime)
+            throw new IllegalArgumentException("Time left must be less than initial time (%s): %s".formatted(getInitialTime(), time));
         if (time < 0)
             throw new IllegalArgumentException("Time left must be non-negative: " + time);
         this.time = time;

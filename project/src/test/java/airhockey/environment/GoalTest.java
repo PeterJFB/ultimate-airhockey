@@ -39,16 +39,16 @@ public class GoalTest {
 
         Puck puck;
 
-        puck = new Puck(10.00001f, rink.getHeight()/2f, 0, 0, 10, "", rink);
+        puck = new Puck(goalWidth/2 + 0.00001f, rink.getHeight()/2f, 0, 0, 10, "", rink);
         Assertions.assertFalse(rink.goalLeft.isGoal(puck), "Puck should be enough right to not be in left goal");
 
-        puck = new Puck(rink.getWidth() - 10.00001f, rink.getHeight()/2f, 0, 0, 10, "", rink);
+        puck = new Puck(rink.getWidth() - goalWidth/2 - 0.00001f, rink.getHeight()/2f, 0, 0, 10, "", rink);
         Assertions.assertFalse(rink.goalRight.isGoal(puck), "Puck should be enough left to not be in right goal");
 
-        puck = new Puck(10f, rink.getHeight()/2f + goalSize/2f + 0.00001f, 0, 0, 10, "", rink);
+        puck = new Puck(goalWidth/2, rink.getHeight()/2f + goalSize/2f + 0.00001f, 0, 0, 10, "", rink);
         Assertions.assertFalse(rink.goalLeft.isGoal(puck), "Puck should be high enough to not be in goal");
 
-        puck = new Puck(10f, rink.getHeight()/2f - goalSize/2f - 0.00001f, 0, 0, 10, "", rink);
+        puck = new Puck(goalWidth/2, rink.getHeight()/2f - goalSize/2f - 0.00001f, 0, 0, 10, "", rink);
         Assertions.assertFalse(rink.goalLeft.isGoal(puck), "Puck should be low enough to not be in goal");
 
 

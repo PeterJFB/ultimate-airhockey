@@ -13,8 +13,6 @@ import javafx.stage.FileChooser;
 import airhockey.lib.SaveController;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,8 +25,6 @@ public class GameController {
     final SaveController<Rink> saveHandler = new SaveHandler();
     final FileChooser fileChooser = new FileChooser();
 
-    @FXML
-    private AnchorPane root;
     @FXML
     private Pane rinkPane;
     @FXML
@@ -52,8 +48,7 @@ public class GameController {
 
     @FXML
     public void initialize() {
-        rink = new Rink(1000, 600);
-
+        rink = new Rink(1000, 600); // Yes you can change size of rink, however the current UI is is designed for it:)
         rinkPane.setPrefWidth(rink.getWidth());
         rinkPane.setPrefHeight(rink.getHeight());
         playerLeftNameText.setText("Player 1");
@@ -73,7 +68,7 @@ public class GameController {
 
         rinkPane.getChildren().clear();
 
-        for (Node e : rink.generateSnapshot()) {
+        for (Node e : rink.generateSnapshotOfGame()) {
             rinkPane.getChildren().add(e);
         }
 
@@ -123,10 +118,6 @@ public class GameController {
                 rink.setPlayerPressing(Side.RIGHT, Direction.LEFT, false);
                 rink.setPlayerPressing(Side.RIGHT, Direction.RIGHT, true);
             }
-            // Other
-            case ENTER -> playGame();
-            case P -> rink.spawnNewPuck();
-            case E -> alertError("Attempted to load from file but an error occurred");
         }
 
     }

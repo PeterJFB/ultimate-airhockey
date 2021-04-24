@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 /*
  * DEPRECATED: This class has been replaced by SaveHandler.
  * Though the experience from using a json serializer was nice, I ultimately decided to do more of the serialization
- * manually, as requested from multiple peers.
+ * manually, as recommended from multiple peers.
  */
 
 public class SaveHandlerUsingJSON implements SaveController<Rink> {
