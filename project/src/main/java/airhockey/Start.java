@@ -1,7 +1,7 @@
 package airhockey;
 
 /*
-* Required in intellij to build .jar file.
+* Used in intellij to build .jar file. GameApp works equally well to run project
 * */
 public class Start {
     public static void main(String[] args) {

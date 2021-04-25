@@ -56,8 +56,4 @@ class PlayerControls {
         }
     }
 
-    public static void main(String[] args) {
-        PlayerControls pc = new PlayerControls();
-        pc.setPlayerPressing(null, true);
-    }
 }
