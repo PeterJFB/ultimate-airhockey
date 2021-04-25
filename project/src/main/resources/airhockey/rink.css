@@ -40,7 +40,7 @@
 }
 
 .player {
-    -fx-fill: #E53935;
+    -fx-fill: #e53935;
     -fx-effect: dropshadow(three-pass-box, black, 3, 0, 0, 2);
 }
 

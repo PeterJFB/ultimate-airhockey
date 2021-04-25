@@ -5,7 +5,7 @@ import javafx.scene.Node;
 import java.util.*;
 
 /*
-* Rink can be interpreted as the games environment. It controls the flow and bounding box of the game.
+* Rink can be interpreted as the games environment/model. It controls the flow and bounding box of the game.
 * */
 
 public class Rink {
@@ -13,8 +13,8 @@ public class Rink {
     // Dimensions
     private int width;
     private int height;
-    private final int MIN_WIDTH = 100;
-    private final int MIN_HEIGHT = 100;
+    private final int MIN_WIDTH = 400;
+    private final int MIN_HEIGHT = 200;
 
     // Items in rink (Delegates)
     Player playerLeft;

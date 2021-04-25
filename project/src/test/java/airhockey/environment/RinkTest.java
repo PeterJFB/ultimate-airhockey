@@ -10,7 +10,7 @@ public class RinkTest {
     @DisplayName("Invalid dimension initialization gives error")
     public void checkDimensions() {
 
-        int[][] invalidDimensions = {{-20, 20}, {20, -20}, {20, 0}, {0, 20}};
+        int[][] invalidDimensions = {{-20, 2000}, {2000, -20}, {2000, 0}, {0, 2000}};
 
         for (int[] dimension : invalidDimensions) {
             Assertions.assertThrows(IllegalArgumentException.class, () -> {
@@ -19,16 +19,16 @@ public class RinkTest {
         }
 
         Assertions.assertDoesNotThrow(() -> {
-            Rink rink = new Rink(100, 100);
+            Rink rink = new Rink(400, 200);
         });
     }
 
     @Test
     @DisplayName("Props placed outside of rink gives error")
     public void itemOutOfBounds() {
-        Rink rink = new Rink(100, 100);
+        Rink rink = new Rink(400, 200);
 
-        int[][] invalidPositions = {{-20, 20}, {20, -20}, {120, 20}, {20, 120}};
+        int[][] invalidPositions = {{-20, 20}, {20, -20}, {420, 20}, {20, 220}};
 
         for (int[] position : invalidPositions) {
             Assertions.assertThrows(IllegalArgumentException.class, () -> {

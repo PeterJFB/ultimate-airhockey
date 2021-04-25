@@ -8,10 +8,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
@@ -19,12 +18,12 @@
    <children>
       <GridPane alignment="CENTER" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
         <columnConstraints>
-          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="-Infinity" />
+          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="-Infinity" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints percentHeight="14.0" prefHeight="30.0" valignment="TOP" vgrow="NEVER" />
-          <RowConstraints percentHeight="80.0" valignment="CENTER" vgrow="ALWAYS" />
-          <RowConstraints percentHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
+          <RowConstraints prefHeight="110.0" valignment="TOP" vgrow="NEVER" />
+          <RowConstraints maxHeight="1.7976931348623157E308" minHeight="0.0" valignment="CENTER" vgrow="ALWAYS" />
+          <RowConstraints prefHeight="80.0" valignment="CENTER" vgrow="NEVER" />
         </rowConstraints>
          <children>
             <HBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="100.0" style="-fx-background-color: #414141; -fx-border-color: black; -fx-border-width: 10; -fx-border-radius: 10; -fx-background-radius: 1; -fx-border-insets: -10; -fx-min-width: 20;" GridPane.valignment="CENTER">
@@ -59,25 +58,39 @@
                   <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
                </GridPane.margin>
             </Text>
-            <Pane cache="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #B3E5FC; -fx-background-color: white; -fx-border-insets: -20; -fx-border-width: 20; -fx-border-color: #616161; -fx-border-radius: 20;" stylesheets="@rink.css" GridPane.rowIndex="1">
+            <GridPane blendMode="SRC_ATOP" cache="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" style="-fx-background-radius: 30; -fx-background-color: white;" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+              <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" />
+                <ColumnConstraints hgrow="SOMETIMES" />
+                  <ColumnConstraints hgrow="SOMETIMES" />
+                  <ColumnConstraints hgrow="SOMETIMES" />
+                  <ColumnConstraints hgrow="SOMETIMES" />
+                  <ColumnConstraints hgrow="SOMETIMES" />
+                <ColumnConstraints hgrow="SOMETIMES" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" percentHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
                <children>
-                  <Circle blendMode="SRC_ATOP" fill="#ffffff00" layoutX="185.0" layoutY="100.0" opacity="0.5" radius="71.0" stroke="RED" strokeType="INSIDE" strokeWidth="4.0" />
-                  <Circle blendMode="SRC_ATOP" fill="#ffffff00" layoutX="185.0" layoutY="500.0" opacity="0.5" radius="71.0" stroke="RED" strokeType="INSIDE" strokeWidth="4.0" />
-                  <Circle blendMode="SRC_ATOP" fill="#ffffff00" layoutX="500.0" layoutY="300.0" opacity="0.5" radius="71.0" stroke="RED" strokeType="INSIDE" strokeWidth="4.0" />
-                  <Circle blendMode="SRC_ATOP" fill="#ffffff00" layoutX="815.0" layoutY="100.0" opacity="0.5" radius="71.0" stroke="RED" strokeType="INSIDE" strokeWidth="4.0" />
-                  <Circle blendMode="SRC_ATOP" fill="#ffffff00" layoutX="815.0" layoutY="500.0" opacity="0.5" radius="71.0" stroke="RED" strokeType="INSIDE" strokeWidth="4.0" />
-                  <Line endX="47.0" endY="314.0" layoutX="300.0" layoutY="293.0" opacity="0.5" startX="47.0" startY="-300.0" stroke="RED" strokeWidth="4.0" />
-                  <Line endX="47.0" endY="314.0" layoutX="600.0" layoutY="293.0" opacity="0.5" startX="47.0" startY="-300.0" stroke="RED" strokeWidth="4.0" />
+                  <TilePane blendMode="SRC_ATOP" cache="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="140.0" style="-fx-border-color: red; -fx-border-width: 4; -fx-opacity: 50%; -fx-border-radius: 50%;" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <TilePane blendMode="SRC_ATOP" cache="true" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="5.0" style="-fx-background-color: red; -fx-opacity: 50%;" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowSpan="3" GridPane.valignment="CENTER" />
+                  <TilePane blendMode="SRC_ATOP" cache="true" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="5.0" style="-fx-background-color: red; -fx-opacity: 50%;" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowSpan="3" />
+                  <TilePane blendMode="SRC_ATOP" cache="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="140.0" style="-fx-border-color: red; -fx-border-width: 4; -fx-opacity: 50%; -fx-border-radius: 50%;" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <TilePane blendMode="SRC_ATOP" cache="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="140.0" style="-fx-border-color: red; -fx-border-width: 4; -fx-opacity: 50%; -fx-border-radius: 50%;" GridPane.columnIndex="5" GridPane.halignment="CENTER" />
+                  <TilePane blendMode="SRC_ATOP" cache="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="140.0" style="-fx-border-color: red; -fx-border-width: 4; -fx-opacity: 50%; -fx-border-radius: 50%;" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <TilePane blendMode="SRC_ATOP" cache="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="140.0" style="-fx-border-color: red; -fx-border-width: 4; -fx-opacity: 50%; -fx-border-radius: 50%;" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                </children>
-            </Pane>
-            <Pane fx:id="rinkPane" cache="true" cacheHint="SPEED" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #B3E5FC; -fx-background-color: none; -fx-border-insets: -20; -fx-border-width: 20; -fx-border-color: #616161; -fx-border-radius: 20;" stylesheets="@rink.css" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            </GridPane>
+            <Pane fx:id="rinkPane" cache="true" cacheHint="SPEED" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #B3E5FC; -fx-background-color: none; -fx-border-insets: -20; -fx-border-width: 20; -fx-border-color: #616161; -fx-border-radius: 20;" stylesheets="@rink.css" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <GridPane.margin>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </GridPane.margin>
             </Pane>
-            <Pane cache="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-border-insets: -20; -fx-border-width: 20; -fx-border-color: #616161; -fx-border-radius: 20;" stylesheets="@rink.css" GridPane.rowIndex="1">
+            <Pane cache="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" style="-fx-border-insets: 0; -fx-border-width: 20; -fx-border-color: #616161; -fx-border-radius: 20;" stylesheets="@rink.css" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
                <effect>
-                  <DropShadow />
+                  <DropShadow height="25.0" radius="12.0" spread="0.1" width="25.0" />
                </effect>
             </Pane>
             <Text fx:id="winnerText" cache="true" cacheHint="SPEED" fill="#ffcf00" stroke="#c37e00" strokeType="OUTSIDE" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
