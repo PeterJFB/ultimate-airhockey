@@ -19,7 +19,7 @@ public class RinkTest {
         }
 
         Assertions.assertDoesNotThrow(() -> {
-            Rink rink = new Rink(400, 200);
+            Rink rink = new Rink(Rink.MIN_WIDTH, Rink.MIN_HEIGHT);
         });
     }
 

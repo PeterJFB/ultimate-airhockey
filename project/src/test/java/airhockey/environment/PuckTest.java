@@ -8,17 +8,30 @@ public class PuckTest {
     @Test
     @DisplayName("Puck spawning out of bounds should give error")
     public void checkInitialization() {
+
+        int[][] invalidPositions = {{-10, Rink.MIN_HEIGHT / 2}, {Rink.MIN_WIDTH / 2, -10},
+                {Rink.MIN_WIDTH / 2, Rink.MIN_HEIGHT + 10}, {Rink.MIN_WIDTH + 10, Rink.MIN_HEIGHT / 2}};
+
+        for (int[] position : invalidPositions) {
+            Assertions.assertThrows(IllegalArgumentException.class, () -> {
+                Rink rink = new Rink(Rink.MIN_WIDTH, Rink.MIN_HEIGHT);
+                Puck puck = new Puck(position[0], position[1], 0, 0, 20, rink);
+            });
+        }
+
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Rink rink = new Rink(60, 40);
-            Puck puck = new Puck(10, -10, 0, 0, 20, rink);
-        });
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Rink rink = new Rink(60, 40);
+            Rink rink = new Rink(Rink.MIN_WIDTH, Rink.MIN_HEIGHT);
             Puck puck = new Puck(10, 6, 0, 0, 0, rink);
-        });
+        }, "Puck with radius equal to zero should raise error");
+
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            Rink rink = new Rink(Rink.MIN_WIDTH, Rink.MIN_HEIGHT);
+            Puck puck = new Puck(10, 6, 0, 0, -2, rink);
+        }, "Puck with negative radius should raise error");
 
         Assertions.assertDoesNotThrow(() -> {
-            Rink rink = new Rink(100, 100);
+            Rink rink = new Rink(Rink.MIN_WIDTH, Rink.MIN_HEIGHT);
             Puck puck = new Puck(10, 6, 0, 0, 1, rink);
         });
     }
@@ -38,7 +51,7 @@ public class PuckTest {
                 "Move puck towards player. They should now be colliding");
 
         rink.tick();
-        Assertions.assertTrue(puck2.getX() + puck2.getRadius() > rink.playerRight.getX() - rink.playerRight.getRadius()  && !puck2.isCollidingWith(rink.playerRight),
+        Assertions.assertTrue(puck2.getX() + puck2.getRadius() > rink.playerRight.getX() - rink.playerRight.getRadius() && !puck2.isCollidingWith(rink.playerRight),
                 "A puck right after touching a player should not collide a second time, even though they're still intersecting");
 
         Puck puck3 = new Puck(rink.playerRight.getX() - rink.playerRight.getRadius() - 10f, rink.playerRight.getY(), 10f, 0f, 10f, "testPuck3", rink);

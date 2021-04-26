@@ -9,9 +9,9 @@ public class GoalTest {
     @Test
     @DisplayName("Goal outside of rink should raise error")
     public void checkInitialization() {
-        Rink rink = new Rink(200, 100);
+        Rink rink = new Rink(Rink.MIN_WIDTH, Rink.MIN_HEIGHT);
         Assertions.assertThrows(IllegalArgumentException.class, ()->{
-            Goal goal = new Goal(Side.LEFT, 150, rink.getHeight()/2f, rink);
+            Goal goal = new Goal(Side.LEFT, Rink.MIN_HEIGHT + 0.001f, rink.getHeight()/2f, rink);
         }, "A goal too large for the rink is not allowed.");
 
         Assertions.assertThrows(IllegalArgumentException.class, ()->{
@@ -33,22 +33,22 @@ public class GoalTest {
     @Test
     @DisplayName("A \"goal\" should only happen when Puck is touching Goal")
     public void checkGoalTrigger() {
-        Rink rink = new Rink(200, 100);
+        Rink rink = new Rink(Rink.MIN_WIDTH, Rink.MIN_HEIGHT);
         float goalSize = rink.goalLeft.getSize();
         float goalWidth = rink.goalLeft.getWidth();
 
         Puck puck;
 
-        puck = new Puck(goalWidth/2 + 0.00001f, rink.getHeight()/2f, 0, 0, 10, "", rink);
+        puck = new Puck(goalWidth/2 + 0.001f, rink.getHeight()/2f, 0, 0, 10, "", rink);
         Assertions.assertFalse(rink.goalLeft.isGoal(puck), "Puck should be enough right to not be in left goal");
 
-        puck = new Puck(rink.getWidth() - goalWidth/2 - 0.00001f, rink.getHeight()/2f, 0, 0, 10, "", rink);
+        puck = new Puck(rink.getWidth() - goalWidth/2f - 0.001f, rink.getHeight()/2f, 0, 0, 10, "", rink);
         Assertions.assertFalse(rink.goalRight.isGoal(puck), "Puck should be enough left to not be in right goal");
 
-        puck = new Puck(goalWidth/2, rink.getHeight()/2f + goalSize/2f + 0.00001f, 0, 0, 10, "", rink);
+        puck = new Puck(goalWidth/2, rink.getHeight()/2f + goalSize/2f + 0.001f, 0, 0, 10, "", rink);
         Assertions.assertFalse(rink.goalLeft.isGoal(puck), "Puck should be high enough to not be in goal");
 
-        puck = new Puck(goalWidth/2, rink.getHeight()/2f - goalSize/2f - 0.00001f, 0, 0, 10, "", rink);
+        puck = new Puck(goalWidth/2, rink.getHeight()/2f - goalSize/2f - 0.001f, 0, 0, 10, "", rink);
         Assertions.assertFalse(rink.goalLeft.isGoal(puck), "Puck should be low enough to not be in goal");
 
 

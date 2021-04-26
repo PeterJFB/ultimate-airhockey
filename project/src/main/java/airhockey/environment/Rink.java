@@ -13,8 +13,8 @@ public class Rink {
     // Dimensions
     private int width;
     private int height;
-    private final int MIN_WIDTH = 400;
-    private final int MIN_HEIGHT = 200;
+    static final int MIN_WIDTH = 400;
+    static final int MIN_HEIGHT = 200;
 
     // Items in rink (Delegates)
     Player playerLeft;
