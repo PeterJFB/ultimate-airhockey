@@ -48,7 +48,7 @@ public class GameController {
 
     @FXML
     public void initialize() {
-        rink = new Rink(100, 600); // Yes you can change size of rink, however the current UI is is designed for it:)
+        rink = new Rink(1000, 600); // Yes you can change size of rink, however the current UI is is designed for it:)
         rinkPane.setPrefWidth(rink.getWidth());
         rinkPane.setPrefHeight(rink.getHeight());
         playerLeftNameText.setText("Player 1");

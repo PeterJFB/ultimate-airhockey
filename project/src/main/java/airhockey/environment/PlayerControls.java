@@ -1,6 +1,6 @@
 package airhockey.environment;
 
-class PlayerControls {
+abstract class PlayerControls {
     /*
      * The class converts discrete events to continuous values which the Player-class can rely on.
      * No tests are written since other classes was deemed more critical.

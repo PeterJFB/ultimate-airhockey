@@ -90,7 +90,7 @@ public class Rink {
                 scoreBoard.addScore(Side.RIGHT, 1);
 
                 // Remove puck unless it is the last one
-                if (pucks.size() < 1) {
+                if (pucks.size() > 1) {
                     puckIterator.remove();
                 } else {
                     puck.resetTo(playerLeft);
